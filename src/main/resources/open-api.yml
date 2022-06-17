@@ -1,0 +1,158 @@
+openapi: 3.0.1
+servers:
+  - url: http://localhost:8080/api/v1
+
+paths:
+  /login:
+    post:
+      description: Set user's name
+      operationId: login
+      requestBody:
+        $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          $ref: "#/components/schemas/LoginResponse"
+
+  /events:
+    post:
+      description: Create new event
+      operationId: createEvent
+      requestBody:
+        $ref: "#/components/schemas/CreateEventRequest"
+      responses:
+        "201":
+          headers:
+            Location:
+              schema:
+                type: string
+          $ref: "#/components/schemas/CreateEventResponse"
+
+  /events/{eventId}:
+    get:
+      description: Get event by id
+      operationId: getEventById
+      responses:
+        "200":
+          $ref: "#/components/schemas/GetEventResponse"
+
+  /event/{eventId}/intervals:
+    get:
+      description: Get intervals by event id
+      operationId: getIntervals
+      responses:
+        "200":
+          $ref: "#/components/schemas/GetIntervalsResponse"
+
+
+  /events/{eventId}/intervals:
+    post:
+      description: Add intervals to event
+      operationId: addIntervals
+      requestBody:
+        $ref: "#/components/schemas/AddIntervalsRequest"
+      responses:
+        "201":
+          description: "Created"
+
+
+  /events/{eventId}/statistics:
+    get:
+      description: Get statistics
+      operationId: getStatistics
+      responses:
+        "200":
+          $ref: "#/components/schemas/GetStatisticsResponse"
+
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        name:
+          description: User name
+          type: string
+
+    CreateEventRequest:
+      $ref: "#/components/schemas/EventDto"
+
+    AddIntervalsRequest:
+      type: array
+      items:
+        type: object
+        properties:
+          startTime:
+            type: string
+          endTime:
+            type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    CreateEventResponse:
+      type: object
+      properties:
+        id:
+          description: uuid of created event
+          type: string
+
+    GetStatisticsResponse:
+      type: object
+      properties:
+        resultIntervals:
+          type: array
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+              endTime:
+                type: string
+        users:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+
+    GetEventResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        organisatorId:
+          type: string
+
+    EventDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    IntervalDto:
+      type: object
+      properties:
+        startTime:
+          type: string
+        endTime:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+
+    GetIntervalsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/IntervalDto"
+
