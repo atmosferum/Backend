@@ -7,9 +7,6 @@ stages:
 
 validate:
   stage: validate
-  only:
-    - master
-    - merge_requests
   except:
     - tags
   script:
@@ -17,9 +14,6 @@ validate:
 
 compile:
   stage: compile
-  only:
-    - master
-    - merge_requests
   except:
     - tags
   script:
@@ -30,9 +24,6 @@ compile:
 
 build:
   stage: build
-  only:
-    - master
-    - merge_requests
   except:
     - tags
   script:
