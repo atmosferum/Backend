@@ -8,7 +8,7 @@ stages:
 validate:
   stage: validate
   only:
-    - dev
+    - master
     - merge_requests
   except:
     - tags
@@ -18,7 +18,7 @@ validate:
 compile:
   stage: compile
   only:
-    - dev
+    - master
     - merge_requests
   except:
     - tags
@@ -31,7 +31,7 @@ compile:
 build:
   stage: build
   only:
-    - dev
+    - master
     - merge_requests
   except:
     - tags
