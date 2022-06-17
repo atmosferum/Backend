@@ -1,158 +1,319 @@
-openapi: 3.0.1
+openapi: 3.0.3
+info:
+  title: WhatTime App
+  description: Core API for WhatTime Application
+  version: '1.0'
+
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: 'http://localhost:8080/api/v1'
+    description: Local dev
+  - url: 'http://whattime.ru/api/v1'
+    description: Production
 
 paths:
   /login:
     post:
-      description: Set user's name
+      description: Identificate by name
       operationId: login
+      tags:
+        - auth
       requestBody:
-        $ref: "#/components/schemas/LoginRequest"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
       responses:
-        "200":
-          $ref: "#/components/schemas/LoginResponse"
+        '204':
+          description: No content
+          headers:
+            Set-Cookie:
+              description: >
+                JSON auth token encoded in Base64 
+                with current user's id and name
+              schema:
+                type: string
+                example: >
+                  AuthToken=eyJpZCI6MSwibmFtZSI6IlZhc3lhIn0==; 
+                  Path=/; HttpOnly; Max-Age=100500
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+
+  /currentUser:
+    get:
+      description: Get current user
+      operationId: getCurrentUser
+      tags:
+        - auth
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Current user has been identified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Current user has not been identified
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+
+  /logout:
+    get:
+      description: Logout current user
+      operationId: logout
+      tags:
+        - auth
+      responses:
+        '204':
+          description: User has been succesfully logged out
+          headers:
+            Set-Cookie:
+              description: Auth token cookie with age equals to 0
+              schema:
+                type: string
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /events:
     post:
       description: Create new event
       operationId: createEvent
+      tags:
+        - events
+      security:
+        - cookieAuth: []
       requestBody:
-        $ref: "#/components/schemas/CreateEventRequest"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
       responses:
-        "201":
+        '201':
+          description: The event has been created succesfully
           headers:
             Location:
+              description: URL of the created event
               schema:
                 type: string
-          $ref: "#/components/schemas/CreateEventResponse"
+                example: http://localhost:8080/events/1
+        '403':
+          description: Unidentified user can not create events
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /events/{eventId}:
     get:
       description: Get event by id
       operationId: getEventById
+      tags:
+        -  events
+      parameters:
+        - $ref: '#/components/parameters/eventId'
       responses:
-        "200":
-          $ref: "#/components/schemas/GetEventResponse"
-
-  /event/{eventId}/intervals:
-    get:
-      description: Get intervals by event id
-      operationId: getIntervals
-      responses:
-        "200":
-          $ref: "#/components/schemas/GetIntervalsResponse"
-
+        '200':
+          description: The event has been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
   /events/{eventId}/intervals:
     post:
-      description: Add intervals to event
-      operationId: addIntervals
+      description: Post intervals to event
+      operationId: postIntervals
+      tags:
+        - events
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/eventId'
       requestBody:
-        $ref: "#/components/schemas/AddIntervalsRequest"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Interval'
       responses:
-        "201":
-          description: "Created"
-
-
-  /events/{eventId}/statistics:
+        '204':
+          description: Intervals have beed posted succesfully
+        '403':
+          description: Unidentified user can not post intervals to events
+        default:
+          $ref: '#/components/responses/ErrorResponse'
     get:
-      description: Get statistics
-      operationId: getStatistics
+      description: Get intervals by event id
+      operationId: getIntervals
+      tags:
+        - events
+      parameters:
+        - $ref: '#/components/parameters/eventId'
       responses:
-        "200":
-          $ref: "#/components/schemas/GetStatisticsResponse"
+        '200':
+          description: Intervals of the event have been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Interval'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
+  /events/{eventId}/result:
+    get:
+      description: Get result of the voting
+      operationId: getVotingResult
+      tags:
+        - events
+      parameters:
+        - $ref: '#/components/parameters/eventId'
+      responses:
+        '200':
+          description: The event has been found and the voting result returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VotingResult"
+        default:
+          $ref: '#/components/responses/ErrorResponse'
 
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+
+  parameters:
+    eventId:
+      name: eventId
+      in: path
+      description: ID of an event
+      required: true
+      schema:
+        type: string
+
+  responses:
+    ErrorResponse:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
-    LoginRequest:
+    Error:
+      description: Error info
+      type: object
+      properties:
+        timestamp:
+          description: Error timestamp with timezone (RFC 3339)
+          type: string
+          format: date-time
+          example: '2022-06-17T10:55:19+00:00'
+        status:
+          description: HTTP response status code
+          type: integer
+          example: 404
+        error:
+          description: Error message
+          type: string
+          example: 'Not Found'
+        path:
+          description: The failed request's path
+          type: string
+          example: '/notFoundPage'
+
+    User:
+      description: User info
       type: object
       properties:
         name:
-          description: User name
+          description: The user's name
           type: string
-
-    CreateEventRequest:
-      $ref: "#/components/schemas/EventDto"
-
-    AddIntervalsRequest:
-      type: array
-      items:
-        type: object
-        properties:
-          startTime:
-            type: string
-          endTime:
-            type: string
-
-    LoginResponse:
-      type: object
-      properties:
+          example: John
         id:
+          description: The user's id
           type: string
-        name:
-          type: string
+          example: 1
+          readOnly: true
+      required:
+        - name
+        - id
 
-    CreateEventResponse:
+    VotingResult:
+      description: The result of users' voting at the event
       type: object
       properties:
-        id:
-          description: uuid of created event
-          type: string
-
-    GetStatisticsResponse:
-      type: object
-      properties:
-        resultIntervals:
+        event:
+          $ref: '#/components/schemas/Event'
+        intervals:
           type: array
           items:
-            type: object
-            properties:
-              startTime:
-                type: string
-              endTime:
-                type: string
+            $ref: '#/components/schemas/Interval'
         users:
           type: array
           items:
-            type: object
-            properties:
-              name:
-                type: string
+            $ref: '#/components/schemas/User'
+      required:
+        - event
+        - intervals
+        - users
 
-    GetEventResponse:
+    Event:
+      description: Event info
       type: object
       properties:
-        name:
+        id:
+          description: UUID of the event
           type: string
+          example: '12da28ba-88b5-4390-992b-5b1e066c07d3'
+          readOnly: true
+        title:
+          description: Title of the event
+          type: string
+          example: John's birthday
         description:
+          description: Short description of the event
           type: string
-        organisatorId:
-          type: string
+          example: Bring your own booze.
+        owner:
+          allOf:
+            - $ref: '#/components/schemas/User'
+            - readOnly: true
+        createdAt:
+          description: Time of creation of the event in seconds since the EPOCH
+          type: integer
+          example: 1655465889
+          readOnly: true
+      required:
+        - id
+        - title
+        - owner
+        - createdAt
 
-    EventDto:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-
-    IntervalDto:
+    Interval:
+      description: Interval of time info
       type: object
       properties:
         startTime:
-          type: string
+          description: Start time of the interval in seconds since the EPOCH
+          type: integer
+          example: 1655465889
         endTime:
-          type: string
-        userId:
-          type: string
-        userName:
-          type: string
-
-    GetIntervalsResponse:
-      type: array
-      items:
-        $ref: "#/components/schemas/IntervalDto"
-
+          description: End time of the interval in seconds since the EPOCH
+          type: integer
+          example: 1655466889
+        owner:
+          allOf:
+            - $ref: '#/components/schemas/User'
+            - readOnly: true
+      required:
+        - startTime
+        - endTime
