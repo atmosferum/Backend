@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
 
+@Component
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
