@@ -2,13 +2,14 @@ package ru.whattime.whattime.controller;
 
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.whattime.whattime.dto.UserDTO;
+import ru.whattime.whattime.encoder.Base64Encoder;
+import ru.whattime.whattime.mapper.UserMapper;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
 
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(path = "/api/v1/login")
 @RequiredArgsConstructor
-public class IdentificationController {
+public class AuthController {
     @Value("${application.auth.cookie.name}")
     private String cookieName;
 
@@ -27,17 +28,21 @@ public class IdentificationController {
 
     private final UserService service;
 
+    private final UserMapper mapper;
+
+    private final Base64Encoder encoder;
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
 
-        if (user.getName() == null || user.getName().equals("")) {
+        if (userDTO.getName() == null || userDTO.getName().equals("")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid user name");
         }
 
-        User savedUser = service.addUser(user);
+        User user = mapper.toUser(userDTO);
+        User savedUser = service.save(user);
 
-        Cookie cookie = new Cookie(cookieName, getTokenByUser(savedUser));
+        Cookie cookie = new Cookie(cookieName, encoder.encodeUser(savedUser));
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(daysToSeconds(maxAgeInDays));
@@ -47,12 +52,6 @@ public class IdentificationController {
         return ResponseEntity.noContent().build();
     }
 
-    private String getTokenByUser(User user) {
-        return Jwts.builder()
-                .claim("name", user.getName())
-                .claim("id", user.getId())
-                .compact();
-    }
 
     private int daysToSeconds(int days) {
         return days * 24 * 60 * 60;
