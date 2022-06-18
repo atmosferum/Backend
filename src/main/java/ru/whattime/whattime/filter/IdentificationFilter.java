@@ -36,13 +36,10 @@ public class IdentificationFilter implements Filter {
         if (request.getMethod().equals("POST")) {
             String token = extractUserTokenFromCookies(request);
 
-
-
             if (token == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             } else {
                 User user = parseToken(token);
-                System.out.println(user.getId());
 
                 if (service.getUserById(user.getId()).isEmpty()) {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -66,10 +63,6 @@ public class IdentificationFilter implements Filter {
             }
         }
         return null;
-    }
-
-    private boolean userInDatabase(String token) {
-        return false;
     }
 
     private User parseToken(String token) throws IOException {
