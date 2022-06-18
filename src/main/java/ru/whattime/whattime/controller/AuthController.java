@@ -1,5 +1,6 @@
 package ru.whattime.whattime.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) throws JsonProcessingException {
 
         if (userDTO.getName() == null || userDTO.getName().equals("")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid user name");
