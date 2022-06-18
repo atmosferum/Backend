@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.UserDTO;
 import ru.whattime.whattime.encoder.Base64Encoder;
 import ru.whattime.whattime.mapper.UserMapper;
@@ -30,7 +31,7 @@ public class AuthController {
 
     private final UserMapper mapper;
 
-    private final Base64Encoder encoder;
+    private final AuthTokenProvider tokenProvider;
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
@@ -42,7 +43,7 @@ public class AuthController {
         User user = mapper.toUser(userDTO);
         User savedUser = service.save(user);
 
-        Cookie cookie = new Cookie(cookieName, encoder.encodeUser(savedUser));
+        Cookie cookie = new Cookie(cookieName, tokenProvider.provideToken(savedUser));
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(daysToSeconds(maxAgeInDays));
