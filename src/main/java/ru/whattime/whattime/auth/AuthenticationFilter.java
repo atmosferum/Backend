@@ -1,11 +1,9 @@
 package ru.whattime.whattime.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.whattime.whattime.encoder.Base64Encoder;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
 
@@ -15,7 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
             User user = tokenProvider.parseToken(token);
 
-            if (service.findById(user.getId()).isEmpty()) {
+            if (service.getUserById(user.getId()).isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
 
