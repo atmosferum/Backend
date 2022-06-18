@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,11 +13,15 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repository;
 
-    public User addUser(User user) {
+    public User save(User user) {
         return repository.save(user);
     }
 
-    public Optional<User> getUserById(Long id) {
+    public List<User> findAll() {
+        return repository.findAll();
+    }
+
+    public Optional<User> findById(Long id) {
         return repository.findById(id);
     }
 
