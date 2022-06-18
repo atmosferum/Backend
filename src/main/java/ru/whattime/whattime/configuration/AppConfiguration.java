@@ -19,7 +19,7 @@ public class AppConfiguration {
     public FilterRegistrationBean<AuthenticationFilter> myFilterRegistration() {
         FilterRegistrationBean<AuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(authenticationFilter);
-        filterRegistrationBean.addUrlPatterns("/api/v1/login/test");
+        filterRegistrationBean.addUrlPatterns(); // Put paths that should be filtered
         filterRegistrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
         return filterRegistrationBean;
     }
