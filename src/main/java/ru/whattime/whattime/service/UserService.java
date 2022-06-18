@@ -21,8 +21,15 @@ public class UserService {
         return repository.save(user);
     }
 
-    public Optional<User> findById(Long id) {
-        return repository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+        return repository
+                .findById(id)
+                .map(user -> {
+                    UserDTO userDTO = new UserDTO();
+                    userDTO.setName(userDTO.getName());
+                    userDTO.setId(user.getId());
+                    return userDTO;
+                });
     }
 
 
