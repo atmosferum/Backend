@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "events")
+@Table(name = "event")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
