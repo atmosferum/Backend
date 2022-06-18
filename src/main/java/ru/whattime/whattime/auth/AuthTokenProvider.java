@@ -1,5 +1,6 @@
 package ru.whattime.whattime.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +19,9 @@ public class AuthTokenProvider {
 
     private final Base64Encoder encoder;
 
-    public String provideToken(User user) {
-        return encoder.encodeUser(user);
+    public String provideToken(User user) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return encoder.encode(mapper.writeValueAsString(user));
     }
 
     public User parseToken(String token) throws IOException {
