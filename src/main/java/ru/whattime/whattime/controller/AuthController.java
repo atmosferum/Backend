@@ -1,6 +1,5 @@
 package ru.whattime.whattime.controller;
 
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.UserDTO;
-import ru.whattime.whattime.encoder.Base64Encoder;
 import ru.whattime.whattime.mapper.UserMapper;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
@@ -29,8 +27,6 @@ public class AuthController {
 
     private final UserService service;
 
-    private final UserMapper mapper;
-
     private final AuthTokenProvider tokenProvider;
 
     @PostMapping
@@ -40,8 +36,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid user name");
         }
 
-        User user = mapper.toUser(userDTO);
-        User savedUser = service.save(user);
+        User savedUser = service.registerUser(userDTO);
 
         Cookie cookie = new Cookie(cookieName, tokenProvider.provideToken(savedUser));
         cookie.setHttpOnly(true);
