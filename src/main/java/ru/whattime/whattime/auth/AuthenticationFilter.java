@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import ru.whattime.whattime.encoder.Base64Encoder;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
@@ -19,17 +20,14 @@ import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final UserService service;
 
     private final AuthTokenProvider tokenProvider;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getMethod().equals("POST")) {
             String token = tokenProvider.provideToken(request);
 
