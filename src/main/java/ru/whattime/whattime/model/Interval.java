@@ -1,11 +1,17 @@
 package ru.whattime.whattime.model;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-@Entity
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -13,10 +19,10 @@ import javax.persistence.*;
 public class Interval {
     @Id
     @Column(unique = true, nullable = false)
-    private String uuid;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
     @Column(nullable = false)
