@@ -27,10 +27,6 @@ public class IdentificationController {
 
     private final UserService service;
 
-    @PostMapping("/test")
-    public ResponseEntity<?> test() {
-        return  ResponseEntity.ok("SDfsdf");
-    }
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
