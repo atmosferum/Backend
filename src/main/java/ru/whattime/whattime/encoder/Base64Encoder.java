@@ -4,14 +4,12 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 import ru.whattime.whattime.model.User;
 
-@Component
-public class Base64Encoder implements Encoder{
+import java.util.Base64;
 
-    @Override
-    public String encodeUser(User user) {
-        return Jwts.builder()
-                .claim("name", user.getName())
-                .claim("id", user.getId())
-                .compact();
+@Component
+public class Base64Encoder {
+
+    public String encode(String input) {
+        return Base64.getUrlEncoder().encodeToString(input.getBytes());
     }
 }
