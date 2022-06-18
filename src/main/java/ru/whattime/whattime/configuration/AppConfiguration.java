@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.whattime.whattime.auth.AuthenticationFilter;
 
 @Configuration
-@EnableWebMvc
 @AllArgsConstructor
 public class AppConfiguration {
 
