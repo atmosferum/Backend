@@ -10,7 +10,6 @@ import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
 
 
-
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,13 +35,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
             if (token == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            } else {
-                User user = tokenProvider.parseToken(token);
-
-                if (service.findById(user.getId()).isEmpty()) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+                return;
             }
+
+            User user = tokenProvider.parseToken(token);
+
+            if (service.findById(user.getId()).isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+
         }
 
         filterChain.doFilter(request, response);
