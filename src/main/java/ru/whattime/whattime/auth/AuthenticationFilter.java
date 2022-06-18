@@ -7,8 +7,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
 
-
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +39,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
             if (service.getUserById(user.getId()).isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
 
         }
