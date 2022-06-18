@@ -3,13 +3,14 @@ package ru.whattime.whattime.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.UserDTO;
-import ru.whattime.whattime.mapper.UserMapper;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.service.UserService;
 
@@ -31,11 +32,7 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response) throws JsonProcessingException {
-
-        if (userDTO.getName() == null || userDTO.getName().equals("")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid user name");
-        }
+    public ResponseEntity<?> login(@Validated @RequestBody UserDTO userDTO, HttpServletResponse response) throws JsonProcessingException {
 
         User savedUser = service.registerUser(userDTO);
 
