@@ -2,10 +2,11 @@ package ru.whattime.whattime.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.whattime.whattime.dto.UserDTO;
+import ru.whattime.whattime.mapper.UserMapper;
 import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.repository.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,12 +14,11 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repository;
 
-    public User save(User user) {
-        return repository.save(user);
-    }
+    private final UserMapper mapper;
 
-    public List<User> findAll() {
-        return repository.findAll();
+    public User registerUser(UserDTO userDTO) {
+        User user = mapper.toEntity(userDTO);
+        return repository.save(user);
     }
 
     public Optional<User> findById(Long id) {
