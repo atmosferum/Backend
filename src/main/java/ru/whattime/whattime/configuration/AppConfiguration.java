@@ -1,12 +1,10 @@
 package ru.whattime.whattime.configuration;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.whattime.whattime.auth.AuthenticationFilter;
 
 @Configuration

@@ -1,8 +1,7 @@
 package ru.whattime.whattime.encoder;
 
-import io.jsonwebtoken.Jwts;
+
 import org.springframework.stereotype.Component;
-import ru.whattime.whattime.model.User;
 
 import java.util.Base64;
 
