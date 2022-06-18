@@ -6,19 +6,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import ru.whattime.whattime.filter.IdentificationFilter;
+import ru.whattime.whattime.auth.AuthenticationFilter;
 
 @Configuration
 @EnableWebMvc
 @AllArgsConstructor
 public class AppConfiguration {
 
-    private IdentificationFilter identificationFilter;
+    private AuthenticationFilter authenticationFilter;
 
     @Bean
-    public FilterRegistrationBean<IdentificationFilter> myFilterRegistration() {
-        FilterRegistrationBean<IdentificationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(identificationFilter);
+    public FilterRegistrationBean<AuthenticationFilter> myFilterRegistration() {
+        FilterRegistrationBean<AuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(authenticationFilter);
         filterRegistrationBean.addUrlPatterns("/api/v1/login/test");
         filterRegistrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 1);
         return filterRegistrationBean;
