@@ -14,7 +14,7 @@ public class AppConfiguration {
     private final AuthenticationFilter authenticationFilter;
 
     @Bean
-    public FilterRegistrationBean<AuthenticationFilter> myFilterRegistration() {
+    public FilterRegistrationBean<AuthenticationFilter> authenticationFilterRegistration() {
         FilterRegistrationBean<AuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(authenticationFilter);
         filterRegistrationBean.addUrlPatterns("/empty");
