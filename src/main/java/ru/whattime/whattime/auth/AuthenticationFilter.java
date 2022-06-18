@@ -22,6 +22,9 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
+    @Value("${application.auth.cookie.name}")
+    private String cookieName;
+
     private final UserService service;
 
     private final AuthTokenProvider tokenProvider;
@@ -29,12 +32,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getMethod().equals("POST")) {
-            String token = tokenProvider.provideToken(request);
+            String token = getAuthTokenFromCookie(request);
 
             if (token == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             } else {
-                User user = parseToken(token);
+                User user = tokenProvider.parseToken(token);
 
                 if (service.findById(user.getId()).isEmpty()) {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -45,13 +48,18 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private User parseToken(String token) throws IOException {
-        String[] parts = token.split("\\.");
-        String body = parts[1];
+    private String getAuthTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
 
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-        ObjectMapper mapper = new ObjectMapper();
+        if (cookies == null) {
+            return null;
+        }
 
-        return mapper.readValue(decoder.decode(body), User.class);
+        for (Cookie cookie : cookies) {
+            if (cookieName.equals(cookie.getName()) && !cookie.getValue().isBlank()) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
