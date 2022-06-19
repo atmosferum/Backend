@@ -1,6 +1,7 @@
 package ru.whattime.whattime.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ class AuthControllerTest {
     ObjectMapper mapper;
 
     @Test
-    void loginTest() throws Exception {
+    @SneakyThrows
+    void loginTest() {
         User user = new User(1L, "John");
 
         Mockito.when(userRepository.save(user)).thenReturn(user);
