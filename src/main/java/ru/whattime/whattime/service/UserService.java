@@ -16,20 +16,15 @@ public class UserService {
 
     private final UserMapper mapper;
 
-    public User registerUser(UserDTO userDTO) {
-        User user = mapper.toEntity(userDTO);
+    public User registerUser(UserDTO userDto) {
+        User user = mapper.toEntity(userDto);
         return repository.save(user);
     }
 
     public Optional<UserDTO> getUserById(Long id) {
         return repository
                 .findById(id)
-                .map(user -> {
-                    UserDTO userDTO = new UserDTO();
-                    userDTO.setName(userDTO.getName());
-                    userDTO.setId(user.getId());
-                    return userDTO;
-                });
+                .map(mapper::toDTO);
     }
 
 
