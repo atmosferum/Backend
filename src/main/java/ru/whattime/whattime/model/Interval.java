@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "intervals")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
