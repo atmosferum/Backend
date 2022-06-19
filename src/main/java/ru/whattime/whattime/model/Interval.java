@@ -23,6 +23,10 @@ public class Interval {
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
+
     @Column(nullable = false)
     private long startTimeInEpochSeconds;
 
