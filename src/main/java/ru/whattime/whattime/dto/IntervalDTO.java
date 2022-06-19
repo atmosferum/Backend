@@ -1,4 +1,4 @@
 package ru.whattime.whattime.dto;
 
-public class EventDto {
+public class IntervalDTO {
 }
