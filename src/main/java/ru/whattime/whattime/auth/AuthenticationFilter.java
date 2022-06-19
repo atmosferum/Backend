@@ -13,10 +13,20 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
+
+    /**
+     * Put paths what should be filtered here
+     */
+    private static final Set<String> URL_PATTERNS = new HashSet<>(Arrays.asList(
+
+    ));
 
     @Value("${application.auth.cookie.name}")
     private String cookieName;
@@ -27,7 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getMethod().equals("POST")) {
+        if (request.getMethod().equals("POST") && URL_PATTERNS.contains(request.getRequestURI())) {
             String token = getAuthTokenFromCookie(request);
 
             if (token == null) {
