@@ -22,7 +22,7 @@ import java.util.Set;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     /**
-     * Put paths what should be filtered here
+     * Put paths that should be filtered here
      */
     private static final Set<String> URL_PATTERNS = new HashSet<>(Arrays.asList(
 
