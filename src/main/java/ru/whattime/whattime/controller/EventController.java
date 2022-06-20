@@ -22,9 +22,6 @@ public class EventController {
 
     private final EventService service;
 
-    private final AuthTokenProvider tokenProvider;
-
-
     @PostMapping
     public ResponseEntity<?> createEvent(@Validated @RequestBody EventDTO eventDto) throws URISyntaxException {
         Event event = service.createEvent(eventDto);
