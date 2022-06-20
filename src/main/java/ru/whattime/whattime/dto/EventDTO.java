@@ -7,7 +7,7 @@ import lombok.extern.jackson.Jacksonized;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @Jacksonized
 public class EventDTO {
     private String uuid;
