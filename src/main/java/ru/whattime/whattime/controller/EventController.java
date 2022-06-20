@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.EventDTO;
 import ru.whattime.whattime.model.Event;
 import ru.whattime.whattime.service.EventService;
@@ -21,9 +20,6 @@ import java.net.URISyntaxException;
 public class EventController {
 
     private final EventService service;
-
-    private final AuthTokenProvider tokenProvider;
-
 
     @PostMapping
     public ResponseEntity<?> createEvent(@Validated @RequestBody EventDTO eventDto) throws URISyntaxException {

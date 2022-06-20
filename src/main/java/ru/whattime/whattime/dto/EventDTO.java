@@ -11,7 +11,6 @@ public class EventDTO {
     @NotBlank
     private String title;
 
-    @NotBlank
     private String description;
 
     private UserDTO owner;
