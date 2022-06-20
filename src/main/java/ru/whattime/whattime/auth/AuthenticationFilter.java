@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.whattime.whattime.model.User;
+import ru.whattime.whattime.dto.UserDTO;
 import ru.whattime.whattime.service.UserService;
 
 import javax.servlet.FilterChain;
@@ -25,7 +25,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
      * Put paths that should be filtered here
      */
     private static final Set<String> URL_PATTERNS = new HashSet<>(Arrays.asList(
-
+        "/api/v1/event"
     ));
 
     @Value("${application.auth.cookie.name}")
@@ -37,21 +37,24 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getMethod().equals("POST") && URL_PATTERNS.contains(request.getRequestURI())) {
-            String token = getAuthTokenFromCookie(request);
+        String token = getAuthTokenFromCookie(request);
+        UserDTO user = tokenProvider.parseToken(token);
 
+        if (request.getMethod().equals("POST") && URL_PATTERNS.contains(request.getRequestURI())) {
             if (token == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-
-            User user = tokenProvider.parseToken(token);
 
             if (service.getUserById(user.getId()).isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
+        }
+
+        if (user != null) {
+            service.identifyUser(user);
         }
 
         filterChain.doFilter(request, response);
