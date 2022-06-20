@@ -23,5 +23,5 @@ public class User {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Event> event;
+    private List<Event> events;
 }
