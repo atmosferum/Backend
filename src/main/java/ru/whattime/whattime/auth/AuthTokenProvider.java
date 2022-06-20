@@ -19,18 +19,26 @@ public class AuthTokenProvider {
 
     private final ObjectMapper mapper;
 
-    public String provideToken(User user) throws JsonProcessingException {
-        return encoder.encode(mapper.writeValueAsString(user));
+    public String provideToken(User user) {
+        try {
+            return encoder.encode(mapper.writeValueAsString(user));
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
-    public UserDTO parseToken(String token) throws IOException {
+    public UserDTO parseToken(String token) {
         if (token == null) {
             return null;
         }
 
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
-        return mapper.readValue(decoder.decode(token), UserDTO.class);
+        try {
+            return mapper.readValue(decoder.decode(token), UserDTO.class);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 
