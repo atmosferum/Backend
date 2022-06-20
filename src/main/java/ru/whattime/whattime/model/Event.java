@@ -19,6 +19,7 @@ import java.util.UUID;
 @Getter
 public class Event {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Type(type = "org.hibernate.type.UUIDCharType")

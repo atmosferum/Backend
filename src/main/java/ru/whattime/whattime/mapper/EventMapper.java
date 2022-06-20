@@ -14,10 +14,10 @@ public interface EventMapper {
     Event toEntity(EventDTO eventDto);
 
     default Long map(LocalDateTime value) {
-        return value.atZone(ZoneId.systemDefault()).toEpochSecond();
+        return value == null? null : value.atZone(ZoneId.systemDefault()).toEpochSecond();
     }
 
     default LocalDateTime map(Long value) {
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(value), ZoneId.systemDefault());
+        return value == null ? null : LocalDateTime.ofInstant(Instant.ofEpochSecond(value), ZoneId.systemDefault());
     }
 }
