@@ -19,13 +19,9 @@ public class AuthTokenProvider {
 
     private final ObjectMapper mapper;
 
-    public String provideToken(User user) {
+    public String provideToken(User user) throws JsonProcessingException {
 
-        try {
-            return encoder.encode(mapper.writeValueAsString(user));
-        } catch (JsonProcessingException e) {
-            return null;
-        }
+        return encoder.encode(mapper.writeValueAsString(user));
     }
 
     public UserDTO parseToken(String token) {
