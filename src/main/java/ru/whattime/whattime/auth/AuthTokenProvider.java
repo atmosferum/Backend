@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.whattime.whattime.dto.UserDTO;
 import ru.whattime.whattime.encoder.Base64Encoder;
 import ru.whattime.whattime.model.User;
 
@@ -22,10 +23,14 @@ public class AuthTokenProvider {
         return encoder.encode(mapper.writeValueAsString(user));
     }
 
-    public User parseToken(String token) throws IOException {
+    public UserDTO parseToken(String token) throws IOException {
+        if (token == null) {
+            return null;
+        }
+
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
-        return mapper.readValue(decoder.decode(token), User.class);
+        return mapper.readValue(decoder.decode(token), UserDTO.class);
     }
 
 
