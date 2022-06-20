@@ -20,6 +20,7 @@ public class AuthTokenProvider {
     private final ObjectMapper mapper;
 
     public String provideToken(User user) {
+
         try {
             return encoder.encode(mapper.writeValueAsString(user));
         } catch (JsonProcessingException e) {
