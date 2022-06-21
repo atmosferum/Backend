@@ -25,10 +25,10 @@ public class UserService {
     }
 
     public boolean identifyUser(UserDTO userDto) {
-        Optional<UserDTO> optionalUserDTO = getUserById(userDto.getId());
+        Optional<User> optionalUser = repository.findById(userDto.getId());
 
-        if (optionalUserDTO.isPresent()) {
-            securityContext.setIdentified(mapper.toEntity(userDto));
+        if (optionalUser.isPresent()) {
+            securityContext.setIdentified(optionalUser.get());
             return true;
         }
 
