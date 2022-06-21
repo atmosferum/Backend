@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EventService {
 
-    private final EventRepository repository;
+    private final EventRepository eventRepository;
 
     private final UserRepository userRepository;
 
@@ -33,6 +33,6 @@ public class EventService {
 
         user.getEvents().add(event);
 
-        return repository.save(event);
+        return eventRepository.save(event);
     }
 }
