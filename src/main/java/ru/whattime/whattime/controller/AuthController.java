@@ -3,20 +3,18 @@ package ru.whattime.whattime.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.UserDto;
 import ru.whattime.whattime.service.UserService;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/api/v1/login")
+@RequestMapping(path = "/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -41,9 +39,19 @@ public class AuthController {
         cookie.setMaxAge(daysToSeconds(maxAgeInDays));
 
         response.addCookie(cookie);
-
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie(cookieName, "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(daysToSeconds(maxAgeInDays));
+        response.addCookie(cookie);
+        return ResponseEntity.noContent().build();
+    }
+
 
     private int daysToSeconds(int days) {
         return days * 24 * 60 * 60;
