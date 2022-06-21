@@ -18,3 +18,4 @@ application:
     cookie:
       name: authToken
       maxAgeInDays: 365
+      empty: 0

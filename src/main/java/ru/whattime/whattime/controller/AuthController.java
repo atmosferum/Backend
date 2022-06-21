@@ -17,18 +17,21 @@ import javax.validation.Valid;
 @RequestMapping(path = "/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
-
-    private final UserService service;
-    private final AuthTokenProvider tokenProvider;
-
     @Value("${application.auth.cookie.name}")
     private String cookieName;
 
     @Value("${application.auth.cookie.maxAgeInDays}")
     private Integer maxAgeInDays;
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<?> login(@Valid @RequestBody UserDto userDTO, HttpServletResponse response) {
+    @Value("${application.auth.cookie.empty}")
+    private String emptyCookie;
+
+    private final UserService service;
+
+    private final AuthTokenProvider tokenProvider;
+
+    @PostMapping(path = "/login", consumes = "application/json")
+    public ResponseEntity<?> login(@Validated @RequestBody UserDTO userDTO, HttpServletResponse response) throws JsonProcessingException {
         UserDto loggedIn = service.login(userDTO);
         String authToken = tokenProvider.provideToken(loggedIn)
                 .orElseThrow(IllegalStateException::new);
@@ -42,9 +45,9 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
+    @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie(cookieName, "");
+        Cookie cookie = new Cookie(cookieName, emptyCookie);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(daysToSeconds(maxAgeInDays));
