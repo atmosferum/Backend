@@ -13,9 +13,10 @@ import java.time.ZoneId;
 public interface EventMapper {
 
     @Mapping(source = "created", target = "createdAt")
+    @Mapping(source = "uuid", target = "id")
     EventDto toDto(Event event);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "updated", ignore = true)
     @Mapping(target = "intervals", ignore = true)

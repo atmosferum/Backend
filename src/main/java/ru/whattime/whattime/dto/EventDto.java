@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Builder(toBuilder = true)
 @Jacksonized
 public class EventDto {
-    private String uuid;
+    private String id;
 
     @NotBlank
     @Size(min = 1, max = 63)

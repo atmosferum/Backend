@@ -1,6 +1,7 @@
 package ru.whattime.whattime.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.mapper.EventMapper;
@@ -31,6 +32,12 @@ public class EventService {
         event.setOwner(user);
         eventRepository.save(event);
 
+        return eventMapper.toDto(event);
+    }
+
+    public EventDto getEventByUuid(UUID uuid) {
+        Event event = eventRepository.findByUuid(uuid);
+        if (event == null) return null;
         return eventMapper.toDto(event);
     }
 }
