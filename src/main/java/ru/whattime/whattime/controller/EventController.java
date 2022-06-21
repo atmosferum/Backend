@@ -7,28 +7,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.whattime.whattime.dto.EventDTO;
-import ru.whattime.whattime.model.Event;
+import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.service.EventService;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
-@RequestMapping("api/v1/event")
+@RequestMapping("api/v1/events")
 @RequiredArgsConstructor
 public class EventController {
 
     private final EventService service;
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createEvent(@Valid @RequestBody EventDTO eventDto) {
-        Event event = service.createEvent(eventDto);
+    public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
+        EventDto event = service.createEvent(eventDto);
 
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(event.getUuid())
-                .toUri()).build();
+                .toUri();
+
+        return ResponseEntity.created(uri).build();
     }
-
-
 }

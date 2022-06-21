@@ -3,40 +3,39 @@ package ru.whattime.whattime.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
-import ru.whattime.whattime.dto.UserDTO;
-import ru.whattime.whattime.encoder.Base64Encoder;
-import ru.whattime.whattime.model.User;
+import ru.whattime.whattime.dto.UserDto;
 
-import java.io.IOException;
-import java.util.Base64;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class AuthTokenProvider {
 
-    private final Base64Encoder encoder;
+    private final ObjectMapper objectMapper;
 
-    private final ObjectMapper mapper;
-
-    public String provideToken(User user) throws JsonProcessingException {
-
-        return encoder.encode(mapper.writeValueAsString(user));
-    }
-
-    public UserDTO parseToken(String token) {
-        if (token == null) {
-            return null;
+    public Optional<String> provideToken(UserDto data) {
+        if (data == null) {
+            return Optional.empty();
         }
 
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-
+        String encoded;
         try {
-            return mapper.readValue(decoder.decode(token), UserDTO.class);
-        } catch (IOException e) {
-            return null;
+            encoded = objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            return Optional.empty();
         }
+
+        return Optional.ofNullable(Base64.encodeBase64String(encoded.getBytes()));
     }
 
-
+    public Optional<UserDto> parseToken(String data) {
+        String decoded = new String(Base64.decodeBase64(data));
+        try {
+            return Optional.ofNullable(objectMapper.readValue(decoded, UserDto.class));
+        } catch (JsonProcessingException e) {
+            return Optional.empty();
+        }
+    }
 }

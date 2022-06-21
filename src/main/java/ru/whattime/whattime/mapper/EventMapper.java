@@ -1,17 +1,25 @@
 package ru.whattime.whattime.mapper;
 
 import org.mapstruct.Mapper;
-import ru.whattime.whattime.dto.EventDTO;
+import org.mapstruct.Mapping;
+import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.model.Event;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-@Mapper
+@Mapper(uses = UserMapper.class)
 public interface EventMapper {
-    EventDTO toDTO(Event event);
-    Event toEntity(EventDTO eventDto);
+
+    @Mapping(source = "created", target = "createdAt")
+    EventDto toDto(Event event);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "intervals", ignore = true)
+    Event toEntity(EventDto eventDto);
 
     default Long map(LocalDateTime value) {
         return value == null? null : value.atZone(ZoneId.systemDefault()).toEpochSecond();
