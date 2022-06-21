@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.dto.IntervalDto;
@@ -14,6 +13,7 @@ import ru.whattime.whattime.service.EventService;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -53,11 +53,8 @@ public class EventController {
     }
 
     @PostMapping(path = "/{id}/intervals", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> putIntervals(@PathVariable String id, @RequestBody List<@Valid IntervalDto> intervalDtoList) {
-        if (service.putIntervals(intervalDtoList, id)) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> putIntervals(@PathVariable String id, @RequestBody @NotNull List<@Valid IntervalDto> intervalDtoList) {
+        service.putIntervals(intervalDtoList, id);
+        return ResponseEntity.noContent().build();
     }
 }
