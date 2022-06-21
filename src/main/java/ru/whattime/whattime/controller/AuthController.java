@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/api/v1")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
     @Value("${application.auth.cookie.name}")
@@ -45,7 +45,7 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/logout")
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie(cookieName, emptyCookie);
         cookie.setHttpOnly(true);
