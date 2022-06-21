@@ -25,7 +25,8 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
 
     // TODO: Regexp
     private static final Set<Pair<String, String>> REQUESTS_TO_FILTER = Set.of(
-            Pair.of("/api/v1/events", "POST")
+            Pair.of("/api/v1/events", "POST"),
+            Pair.of("/api/v1/currentUser", "GET")
     );
 
     private final SecurityContext securityContext;

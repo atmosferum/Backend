@@ -1,5 +1,6 @@
 package ru.whattime.whattime.controller;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public class AuthController {
 
     private final UserService service;
     private final AuthTokenProvider tokenProvider;
+
+    private final Gson gson = new Gson();
 
     @Value("${application.auth.cookie.name}")
     private String cookieName;
@@ -49,6 +52,11 @@ public class AuthController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "/currentUser")
+    public ResponseEntity<?> currentUser() {
+        return ResponseEntity.ok(gson.toJson(service.getCurrentUser()));
     }
 
     private int daysToSeconds(int days) {
