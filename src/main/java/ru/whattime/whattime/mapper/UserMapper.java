@@ -1,11 +1,17 @@
 package ru.whattime.whattime.mapper;
 
 import org.mapstruct.Mapper;
-import ru.whattime.whattime.dto.UserDTO;
+import org.mapstruct.Mapping;
+import ru.whattime.whattime.dto.UserDto;
 import ru.whattime.whattime.model.User;
 
 @Mapper
 public interface UserMapper {
-    UserDTO toDTO(User user);
-    User toEntity(UserDTO userDTO);
+    UserDto toDto(User user);
+
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "events", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    User toEntity(UserDto userDTO);
 }
