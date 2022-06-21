@@ -3,10 +3,7 @@ package ru.whattime.whattime.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.whattime.whattime.auth.AuthTokenProvider;
 import ru.whattime.whattime.dto.UserDto;
 import ru.whattime.whattime.service.UserService;
@@ -16,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/api/v1/login")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -29,7 +26,7 @@ public class AuthController {
     @Value("${application.auth.cookie.maxAgeInDays}")
     private Integer maxAgeInDays;
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(path = "/login", consumes = "application/json")
     public ResponseEntity<?> login(@Valid @RequestBody UserDto userDTO, HttpServletResponse response) {
         UserDto loggedIn = service.login(userDTO);
         String authToken = tokenProvider.provideToken(loggedIn)
@@ -41,7 +38,16 @@ public class AuthController {
         cookie.setMaxAge(daysToSeconds(maxAgeInDays));
 
         response.addCookie(cookie);
+        return ResponseEntity.noContent().build();
+    }
 
+    @GetMapping(path = "/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie(cookieName, "");
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ResponseEntity.noContent().build();
     }
 
