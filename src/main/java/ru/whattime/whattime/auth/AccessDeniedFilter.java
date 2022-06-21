@@ -1,18 +1,14 @@
 package ru.whattime.whattime.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.util.Pair;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.whattime.whattime.security.SecurityContext;
-import ru.whattime.whattime.service.UserService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,7 +21,8 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
 
     // TODO: Regexp
     private static final Set<Pair<String, String>> REQUESTS_TO_FILTER = Set.of(
-            Pair.of("/api/v1/events", "POST")
+            Pair.of("/api/v1/events", "POST"),
+            Pair.of("/api/v1/events/{id}/intervals", "POST")
     );
 
     private final SecurityContext securityContext;
@@ -42,7 +39,18 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return REQUESTS_TO_FILTER.stream()
-                .noneMatch(entry -> entry.getFirst().equals(request.getRequestURI())
-                        && entry.getSecond().equals(request.getMethod()));
+                .noneMatch(entry -> (entry.getFirst().equals(request.getRequestURI())
+                        && entry.getSecond().equals(request.getMethod()))
+                        || checkMatches(entry.getFirst(), request.getRequestURI()));
+    }
+
+    private boolean checkMatches(String entry, String request) {
+        System.out.println(entry);
+        if (!entry.contains("{") && !entry.contains("}")) {
+            return false;
+        }
+
+        String regex = entry.substring(0, entry.indexOf("{")) + ".+" + entry.substring(entry.indexOf("}") + 1);
+        return request.matches(regex);
     }
 }
