@@ -49,13 +49,13 @@ public class EventService {
 
     @Transactional
     public void putIntervals(List<IntervalDto> intervalDtoList, String eventId) {
-        User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
-
-        Optional<Event> optionalEvent = eventRepository.findEventByUuid(UUID.fromString(eventId));
-
         if (!intervalsValidator.validate(intervalDtoList)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
         }
+
+        User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
+
+        Optional<Event> optionalEvent = eventRepository.findEventByUuid(UUID.fromString(eventId));
 
         if (optionalEvent.isPresent()) {
             List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
@@ -65,8 +65,6 @@ public class EventService {
 
                 return interval;
             }).collect(Collectors.toList());
-
-
 
             intervalRepository.saveAll(intervals);
         } else {
