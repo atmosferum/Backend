@@ -28,9 +28,9 @@ public class IntervalsValidator {
                 return false;
             }
 
-            if (i != intervals.size()) {
+            if (i != intervals.size() - 1) {
                 LocalDateTime startTimeNext = LocalDateTime.ofInstant(Instant.ofEpochSecond(intervals.get(i + 1).getStartTime()), ZoneId.systemDefault());
-                if (endTime.isBefore(startTimeNext)) {
+                if (startTimeNext.isBefore(endTime)) {
                     return false;
                 }
             }

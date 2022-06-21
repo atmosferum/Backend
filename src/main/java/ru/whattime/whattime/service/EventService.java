@@ -53,23 +53,24 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
         }
 
-        User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
-
         Optional<Event> optionalEvent = eventRepository.findEventByUuid(UUID.fromString(eventId));
 
-        if (optionalEvent.isPresent()) {
-            List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
-                Interval interval = intervalMapper.toEntity(intervalDto);
-                interval.setEvent(optionalEvent.get());
-                interval.setOwner(user);
-
-                return interval;
-            }).collect(Collectors.toList());
-
-            intervalRepository.saveAll(intervals);
-        } else {
+        if (optionalEvent.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not exists");
         }
+
+        User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
+
+
+        List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
+            Interval interval = intervalMapper.toEntity(intervalDto);
+            interval.setEvent(optionalEvent.get());
+            interval.setOwner(user);
+
+            return interval;
+        }).collect(Collectors.toList());
+
+        intervalRepository.saveAll(intervals);
     }
 
 }
