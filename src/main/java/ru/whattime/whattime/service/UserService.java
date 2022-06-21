@@ -24,8 +24,15 @@ public class UserService {
         return mapper.toDTO(user);
     }
 
-    public void identifyUser(UserDTO userDto) {
-        securityContext.setIdentified(mapper.toEntity(userDto));
+    public boolean identifyUser(UserDTO userDto) {
+        Optional<UserDTO> optionalUserDTO = getUserById(userDto.getId());
+
+        if (optionalUserDTO.isPresent()) {
+            securityContext.setIdentified(mapper.toEntity(userDto));
+            return true;
+        }
+
+        return false;
     }
 
     public User registerUser(UserDTO userDto) {
