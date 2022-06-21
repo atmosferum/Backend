@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Event> events;
 }
