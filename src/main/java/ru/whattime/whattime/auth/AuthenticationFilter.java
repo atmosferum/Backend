@@ -2,6 +2,7 @@ package ru.whattime.whattime.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.whattime.whattime.dto.UserDTO;
@@ -24,8 +25,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     /**
      * Put paths that should be filtered here
      */
-    private static final Set<List<String>> FILTERED_URL_PATTERNS = new HashSet<>(List.of(
-            List.of("/api/v1/event", "POST")
+    private static final Set<Pair<String, String>> FILTERED_URL_PATTERNS = new HashSet<>(List.of(
+            Pair.of("/api/v1/event", "POST")
     ));
 
     @Value("${application.auth.cookie.name}")
@@ -56,8 +57,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return FILTERED_URL_PATTERNS.stream().noneMatch(entry -> entry.get(0).equals(request.getRequestURI())
-                && entry.get(1).equals(request.getMethod()));
+        return FILTERED_URL_PATTERNS.stream().noneMatch(entry -> entry.getFirst().equals(request.getRequestURI())
+                && entry.getSecond().equals(request.getMethod()));
     }
 
     private String getAuthTokenFromCookie(HttpServletRequest request) {
