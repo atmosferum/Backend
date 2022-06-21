@@ -33,16 +33,42 @@ class AuthControllerTest {
     @Test
     @SneakyThrows
     void loginTest() {
-        User user = new User(1L, "John");
+        User user1 = new User(1L, "John", null);
 
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user1)).thenReturn(user1);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(user));
+                .content(this.mapper.writeValueAsString(user1));
 
         mockMvc.perform(mockRequest)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        User user2 = new User(1L, "", null);
+
+        MockHttpServletRequestBuilder mockRequest2 = MockMvcRequestBuilders.post("/api/v1/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(user2));
+
+        mockMvc.perform(mockRequest2)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    void loginWithBadRequestTest() {
+        User user2 = new User(1L, "", null);
+
+        Mockito.when(userRepository.save(user2)).thenReturn(user2);
+
+        MockHttpServletRequestBuilder mockRequest2 = MockMvcRequestBuilders.post("/api/v1/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(user2));
+
+        mockMvc.perform(mockRequest2)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
