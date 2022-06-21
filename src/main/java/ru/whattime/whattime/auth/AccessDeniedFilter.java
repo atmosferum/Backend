@@ -22,7 +22,7 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
     // TODO: Regexp
     private static final Set<Pair<String, String>> REQUESTS_TO_FILTER = Set.of(
             Pair.of("/api/v1/events", "POST"),
-            Pair.of("/api/v1/events/{id}/intervals", "POST")
+            Pair.of("/api/v1/events/{var}/intervals", "POST")
     );
 
     private final SecurityContext securityContext;
@@ -45,12 +45,11 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
     }
 
     private boolean checkMatches(String entry, String request) {
-        System.out.println(entry);
         if (!entry.contains("{") && !entry.contains("}")) {
             return false;
         }
 
-        String regex = entry.substring(0, entry.indexOf("{")) + ".+" + entry.substring(entry.indexOf("}") + 1);
+        String regex = entry.replace("{", ".+?").replace("var", "").replace("}", "");
         return request.matches(regex);
     }
 }
