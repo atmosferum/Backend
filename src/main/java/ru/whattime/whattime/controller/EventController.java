@@ -52,9 +52,9 @@ public class EventController {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(path = "/{id}/intervals", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> putIntervals(@PathVariable String id, @RequestBody @NotNull List<@Valid IntervalDto> intervalDtoList) {
-        service.putIntervals(intervalDtoList, id);
+    @PostMapping(path = "/{eventId}/intervals", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> putIntervals(@PathVariable String eventId, @RequestBody @NotNull List<@Valid IntervalDto> intervalDtoList) {
+        service.putIntervals(intervalDtoList, eventId);
         return ResponseEntity.noContent().build();
     }
 }

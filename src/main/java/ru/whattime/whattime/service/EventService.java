@@ -58,8 +58,7 @@ public class EventService {
                 Interval interval = intervalMapper.toEntity(intervalDto);
                 interval.setEvent(optionalEvent.get());
                 interval.setOwner(user);
-
-
+                
                 return interval;
             }).collect(Collectors.toList());
 
