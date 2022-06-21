@@ -13,9 +13,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 @Component
 @RequiredArgsConstructor
@@ -24,9 +24,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     /**
      * Put paths that should be filtered here
      */
-    private static final Set<String> URL_PATTERNS = new HashSet<>(Arrays.asList(
-        "/api/v1/event"
-    ));
+    private static final Map<String, String> FILTERED_URL_PATTERNS = Map.ofEntries(
+            entry("/api/v1/event", "POST")
+    );
 
     @Value("${application.auth.cookie.name}")
     private String cookieName;
@@ -40,24 +40,24 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String token = getAuthTokenFromCookie(request);
         UserDTO user = tokenProvider.parseToken(token);
 
-        if (request.getMethod().equals("POST") && URL_PATTERNS.contains(request.getRequestURI())) {
-            if (token == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
 
-            if (service.getUserById(user.getId()).isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-
+        if (token == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
-        if (user != null) {
-            service.identifyUser(user);
+        if (!service.identifyUser(user)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return FILTERED_URL_PATTERNS.entrySet().stream().noneMatch(entry -> entry.getKey().equals(request.getRequestURI())
+                && entry.getValue().equals(request.getMethod()));
     }
 
     private String getAuthTokenFromCookie(HttpServletRequest request) {
