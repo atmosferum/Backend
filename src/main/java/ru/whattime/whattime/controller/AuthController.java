@@ -9,7 +9,6 @@ import ru.whattime.whattime.dto.UserDto;
 import ru.whattime.whattime.service.UserService;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -17,21 +16,18 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
+
+    private final UserService service;
+    private final AuthTokenProvider tokenProvider;
+
     @Value("${application.auth.cookie.name}")
     private String cookieName;
 
     @Value("${application.auth.cookie.maxAgeInDays}")
     private Integer maxAgeInDays;
 
-    @Value("${application.auth.cookie.empty}")
-    private String emptyCookie;
-
-    private final UserService service;
-
-    private final AuthTokenProvider tokenProvider;
-
     @PostMapping(path = "/login", consumes = "application/json")
-    public ResponseEntity<?> login(@Validated @RequestBody UserDTO userDTO, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<?> login(@Valid @RequestBody UserDto userDTO, HttpServletResponse response) {
         UserDto loggedIn = service.login(userDTO);
         String authToken = tokenProvider.provideToken(loggedIn)
                 .orElseThrow(IllegalStateException::new);
@@ -45,16 +41,15 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @GetMapping(path = "/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie(cookieName, emptyCookie);
+        Cookie cookie = new Cookie(cookieName, "");
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(daysToSeconds(maxAgeInDays));
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
         return ResponseEntity.noContent().build();
     }
-
 
     private int daysToSeconds(int days) {
         return days * 24 * 60 * 60;
