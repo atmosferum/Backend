@@ -14,10 +14,9 @@ import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.repository.EventRepository;
 import ru.whattime.whattime.repository.IntervalRepository;
 import ru.whattime.whattime.repository.UserRepository;
+import ru.whattime.whattime.validator.IntervalsValidator;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +32,7 @@ public class EventService {
     private final EventMapper eventMapper;
     private final IntervalMapper intervalMapper;
     private final UserService userService;
+    private final IntervalsValidator intervalsValidator;
 
     @Transactional
     public EventDto createEvent(EventDto eventDto) {
@@ -53,18 +53,20 @@ public class EventService {
 
         Optional<Event> optionalEvent = eventRepository.findEventByUuid(UUID.fromString(eventId));
 
+        if (!intervalsValidator.validate(intervalDtoList)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
+        }
+
         if (optionalEvent.isPresent()) {
             List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
                 Interval interval = intervalMapper.toEntity(intervalDto);
                 interval.setEvent(optionalEvent.get());
                 interval.setOwner(user);
-                
+
                 return interval;
             }).collect(Collectors.toList());
 
-            if (!checkIntervals(intervals)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
-            }
+
 
             intervalRepository.saveAll(intervals);
         } else {
@@ -72,31 +74,4 @@ public class EventService {
         }
     }
 
-    private boolean checkIntervals(List<Interval> intervals) {
-        intervals.sort(Comparator.comparing((Interval::getStartTime)));
-
-        for (int i = 0; i < intervals.size(); i++) {
-            Interval interval = intervals.get(i);
-
-            LocalDateTime startTime = interval.getStartTime();
-            LocalDateTime endTime = interval.getEndTime();
-
-            if (endTime.isBefore(startTime)) {
-                return false;
-            }
-
-            if (startTime.isBefore(LocalDateTime.now())) {
-                return false;
-            }
-
-            if (i != intervals.size()) {
-                if (endTime.isBefore(intervals.get(i + 1).getStartTime())) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-
-    }
 }
