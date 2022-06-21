@@ -13,9 +13,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
-
-import static java.util.Map.entry;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -24,9 +24,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     /**
      * Put paths that should be filtered here
      */
-    private static final Map<String, String> FILTERED_URL_PATTERNS = Map.ofEntries(
-            entry("/api/v1/event", "POST")
-    );
+    private static final Set<List<String>> FILTERED_URL_PATTERNS = new HashSet<>(List.of(
+            List.of("/api/v1/event", "POST")
+    ));
 
     @Value("${application.auth.cookie.name}")
     private String cookieName;
@@ -56,8 +56,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return FILTERED_URL_PATTERNS.entrySet().stream().noneMatch(entry -> entry.getKey().equals(request.getRequestURI())
-                && entry.getValue().equals(request.getMethod()));
+        return FILTERED_URL_PATTERNS.stream().noneMatch(entry -> entry.get(0).equals(request.getRequestURI())
+                && entry.get(1).equals(request.getMethod()));
     }
 
     private String getAuthTokenFromCookie(HttpServletRequest request) {
