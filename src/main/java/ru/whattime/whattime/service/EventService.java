@@ -42,6 +42,7 @@ public class EventService {
         return eventMapper.toDto(event);
     }
 
+    @Transactional
     public boolean putIntervals(List<IntervalDto> intervalDtoList, String eventId) {
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
 
