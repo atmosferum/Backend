@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=whattime
+      - POSTGRES_PASSWORD=10oclock
+      - POSTGRES_DB=whattime
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  whattime:
+    image: whattime:latest
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/whattime
+      - SPRING_DATASOURCE_USERNAME=whattime
+      - SPRING_DATASOURCE_PASSWORD=10oclock
+    ports:
+      - '8080:8080'
+volumes:
+  db:
+    driver: local

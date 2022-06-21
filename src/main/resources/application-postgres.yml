@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/whattime
-    username:
-    password:
+    username: whattime
+    password: 10oclock
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -11,11 +11,3 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-
-
-application:
-  auth:
-    cookie:
-      name: authToken
-      maxAgeInDays: 365
-      empty: 0
