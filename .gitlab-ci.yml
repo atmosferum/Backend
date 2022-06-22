@@ -1,54 +1,17 @@
-stages:
-  - build
-  - image
-
-.docker_login: &docker_login
-  - mkdir -p /kaniko/.docker
-  - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-
-cache:
-  paths:
-    - .m2/repository
-
-variables:
-  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository'
-
-#Test:
-#  stage: test
-#  image: maven:3.8.6-openjdk-18
-#  script:
-#    - mvn test
-
-Build jar:
+docker-build:
+  # Use the official docker image.
+  image: docker:latest
   stage: build
-  image: maven:3.8.6-openjdk-18
-  script:
-    - mvn clean package -DskipTests
-    - cd target
-    - java -jar -Djarmode=layertools whattime-0.0.1-SNAPSHOT.jar extract
-  artifacts:
-    paths:
-      - target/*.jar
-      - target/spring-boot-loader
-      - target/dependencies
-      - target/snapshot-dependencies
-      - target/application
-
-Build an image:
-  stage: image
-  only:
-    - master
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [ "" ]
-  dependencies:
-    - Build jar
+  services:
+    - docker:dind
   before_script:
-    - *docker_login
+    - apk add curl git
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - kubectl version --client
+    - kubectl config get-contexts
+    - kubectl config use-context digedu/other/gitops-test:sferum-dev
+
   script:
-    - >-
-      /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/delivery/docker/Dockerfile"
-      --build-arg "JAR_FOLDER=./target"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+    - kubectl get po
+    - helm list
