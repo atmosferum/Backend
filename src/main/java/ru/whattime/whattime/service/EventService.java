@@ -51,8 +51,8 @@ public class EventService {
     }
 
     @Transactional
-    public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
-        Event event = eventRepository.findByUuid(UUID.fromString(eventId))
+    public void putIntervals(List<IntervalDto> intervalDtos, UUID eventId) {
+        Event event = eventRepository.findByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
