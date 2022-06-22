@@ -42,6 +42,11 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(path = "/{eventId}/intervals", produces = "application/json")
+    public ResponseEntity<?> getIntervals(@PathVariable UUID eventId) {
+        return ResponseEntity.ok(service.getIntervals(eventId));
+    }
+
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> getEvent(@PathVariable UUID id) {
         EventDto eventDto = service.getEvent(id);

@@ -71,4 +71,12 @@ public class EventService {
         intervalRepository.saveAll(intervals);
     }
 
+
+    @Transactional
+    public List<IntervalDto> getIntervals(UUID eventId) {
+        Event event = eventRepository.findByUuid(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
+
+        return event.getIntervals().stream().map(intervalMapper::toDto).toList();
+    }
 }

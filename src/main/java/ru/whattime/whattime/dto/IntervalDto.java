@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class IntervalDto {
 
     private Long id;
-    private User owner;
+    private UserDto owner;
 
     @NotNull(message = "Start time of an interval must not be null")
     private Long startTime;
