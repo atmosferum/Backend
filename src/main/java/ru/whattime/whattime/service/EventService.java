@@ -47,8 +47,8 @@ public class EventService {
     }
 
     @Transactional
-    public void putIntervals(List<IntervalDto> intervalDtoList, String eventId) {
-        if (!intervalsValidator.validate(intervalDtoList)) {
+    public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
+        if (!intervalsValidator.validate(intervalDtos)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
         }
 
@@ -60,7 +60,7 @@ public class EventService {
         event.getIntervals().removeIf(i -> i.getOwner().equals(user));
         eventRepository.save(event);
 
-        List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
+        List<Interval> intervals = intervalDtos.stream().map(intervalDto -> {
             Interval interval = intervalMapper.toEntity(intervalDto);
             interval.setEvent(event);
             interval.setOwner(user);
