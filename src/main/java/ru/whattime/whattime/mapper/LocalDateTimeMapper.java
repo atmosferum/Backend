@@ -1,4 +1,4 @@
-package ru.whattime.whattime.converter;
+package ru.whattime.whattime.mapper;
 
 import org.mapstruct.Mapper;
 

@@ -2,7 +2,6 @@ package ru.whattime.whattime.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.whattime.whattime.converter.LocalDateTimeMapper;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.model.Event;
 
