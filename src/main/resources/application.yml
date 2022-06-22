@@ -7,13 +7,25 @@ application:
       name: authToken
       maxAgeInDays: 365
 
+
 management:
   endpoint:
     health:
       probes:
         enabled: true
+    httptrace:
+      enabled: true
   health:
     livenessstate:
       enabled: true
     readinessstate:
       enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
+spring:
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
