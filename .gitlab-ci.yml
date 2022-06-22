@@ -1,6 +1,6 @@
 stages:
-  - test
   - build
+  - image
 
 .docker_login: &docker_login
   - mkdir -p /kaniko/.docker
@@ -13,11 +13,11 @@ cache:
 variables:
   MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository'
 
-Test:
-  stage: test
-  image: maven:3.8.6-openjdk-18
-  script:
-    - mvn test
+#Test:
+#  stage: test
+#  image: maven:3.8.6-openjdk-18
+#  script:
+#    - mvn test
 
 Build jar:
   stage: build
@@ -29,7 +29,7 @@ Build jar:
       - target/*.jar
 
 Build an image:
-  stage: build
+  stage: image
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
