@@ -59,12 +59,16 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not exists");
         }
 
+        Event event = optionalEvent.get();
+
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
 
+        event.getIntervals().removeIf(i -> i.getOwner().equals(user));
+        eventRepository.save(event);
 
         List<Interval> intervals = intervalDtoList.stream().map(intervalDto -> {
             Interval interval = intervalMapper.toEntity(intervalDto);
-            interval.setEvent(optionalEvent.get());
+            interval.setEvent(event);
             interval.setOwner(user);
 
             return interval;
