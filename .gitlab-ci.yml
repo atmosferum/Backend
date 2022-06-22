@@ -57,6 +57,7 @@ Build an image:
 Deploy to K8s:
   image: docker:latest
   stage: deploy
+  when: manual
   only:
     - master
   services:
