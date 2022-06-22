@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.dto.IntervalDto;
 import ru.whattime.whattime.dto.UserDto;
-import ru.whattime.whattime.dto.VoitingResultDto;
+import ru.whattime.whattime.dto.VotingResultDto;
 import ru.whattime.whattime.mapper.EventMapper;
 import ru.whattime.whattime.mapper.IntervalMapper;
 import ru.whattime.whattime.mapper.UserMapper;
@@ -84,11 +84,11 @@ public class EventService {
     }
 
     @Transactional
-    public VoitingResultDto getVoitingResult(UUID eventId) {
+    public VotingResultDto getVoitingResult(UUID eventId) {
         Event event = eventRepository.findByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
-        VoitingResultDto.VoitingResultDtoBuilder voitingResult = VoitingResultDto.builder()
+        VotingResultDto.VotingResultDtoBuilder voitingResult = VotingResultDto.builder()
                 .event(eventMapper.toDto(event));
 
         Set<UserDto> participants = new HashSet<>();

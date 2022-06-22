@@ -10,7 +10,7 @@ import java.util.Set;
 @Data
 @Builder(toBuilder = true)
 @Jacksonized
-public class VoitingResultDto {
+public class VotingResultDto {
     private EventDto event;
     private List<IntervalDto> intervals;
     private Set<UserDto> participants;
