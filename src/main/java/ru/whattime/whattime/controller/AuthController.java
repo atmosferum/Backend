@@ -23,8 +23,6 @@ public class AuthController {
     private final UserService service;
     private final AuthTokenProvider tokenProvider;
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
     @Value("${application.auth.cookie.name}")
     private String cookieName;
 
@@ -57,9 +55,9 @@ public class AuthController {
     }
 
     @SneakyThrows
-    @GetMapping(path = "/currentUser")
+    @GetMapping(path = "/currentUser", produces = "application/json")
     public ResponseEntity<?> currentUser() {
-        return ResponseEntity.ok(objectWriter.writeValueAsString(service.getCurrentUser()));
+        return ResponseEntity.ok(service.getCurrentUser());
     }
 
     private int daysToSeconds(int days) {
