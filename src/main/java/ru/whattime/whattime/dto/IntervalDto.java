@@ -1,13 +1,14 @@
 package ru.whattime.whattime.dto;
 
 import lombok.Data;
-import ru.whattime.whattime.model.User;
+import lombok.NoArgsConstructor;
 import ru.whattime.whattime.validation.StartBeforeEnd;
 
 import javax.validation.constraints.NotNull;
 
 @Data
 @StartBeforeEnd
+@NoArgsConstructor
 public class IntervalDto {
 
     private Long id;
@@ -19,4 +20,8 @@ public class IntervalDto {
     @NotNull(message = "End time of an interval must not be null")
     private Long endTime;
 
+    public IntervalDto(Long startTime, Long endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
