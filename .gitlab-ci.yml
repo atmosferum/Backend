@@ -39,7 +39,6 @@ Build an image:
   stage: image
   only:
     - master
-    - ci_test
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
@@ -55,9 +54,11 @@ Build an image:
       --build-arg "JAR_FOLDER=./target"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
 
-update_deployment:
+Deploy to K8s:
   image: docker:latest
   stage: deploy
+  only:
+    - master
   services:
     - docker:dind
   before_script:
@@ -67,6 +68,5 @@ update_deployment:
     - kubectl version --client
     - kubectl config use-context digedu/campus-june-2022/gitops-test:sferum-dev
     - kubectl config set-context --current --namespace=app-campus-june-2022
-
   script:
     - kubectl set image deployment/campus-whattime backend=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
