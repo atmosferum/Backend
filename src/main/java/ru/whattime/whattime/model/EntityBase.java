@@ -27,6 +27,7 @@ public abstract class EntityBase {
     @UpdateTimestamp
     private LocalDateTime updated;
 
+    // TODO: Подумать, как правильно реализовать equals (Hibernate proxy и т.д.)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
