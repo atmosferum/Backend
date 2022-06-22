@@ -18,7 +18,6 @@ import ru.whattime.whattime.validator.IntervalsValidator;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,13 +52,8 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
         }
 
-        Optional<Event> optionalEvent = eventRepository.findEventByUuid(UUID.fromString(eventId));
-
-        if (optionalEvent.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not exists");
-        }
-
-        Event event = optionalEvent.get();
+        Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
 
