@@ -27,16 +27,17 @@ public abstract class EntityBase {
     @UpdateTimestamp
     private LocalDateTime updated;
 
+    // TODO: Подумать, как правильно реализовать equals (Hibernate proxy и т.д.)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntityBase that = (EntityBase) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 }

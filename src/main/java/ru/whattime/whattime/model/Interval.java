@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -22,8 +23,8 @@ public class Interval extends EntityBase {
     private Event event;
 
     @Column(nullable = false)
-    private Long startTimeInEpochSeconds;
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private Long endTimeInEpochSeconds;
+    private LocalDateTime endTime;
 }
