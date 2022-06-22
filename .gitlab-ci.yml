@@ -43,11 +43,10 @@ Build an image:
     - Build jar
   before_script:
     - *docker_login
-    - if [ $CI_COMMIT_TAG == '' ]; then APP_VERSION=${CI_COMMIT_SHORT_SHA} fi
   script:
     - >-
       /kaniko/executor
       --context "${CI_PROJECT_DIR}/target"
       --dockerfile "${CI_PROJECT_DIR}/delivery/docker/Dockerfile"
       --build-arg "JAR_FOLDER=${CI_PROJECT_DIR}/target"
-      --destination "${CI_REGISTRY_IMAGE}:${APP_VERSION}"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
