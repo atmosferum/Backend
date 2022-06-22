@@ -44,9 +44,15 @@ public class EventService {
         return eventMapper.toDto(event);
     }
 
+    public EventDto getEvent(UUID uuid) {
+        Event event = eventRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with this uuid not found"));
+        return eventMapper.toDto(event);
+    }
+
     @Transactional
-    public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
-        Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
+    public void putIntervals(List<IntervalDto> intervalDtos, UUID eventId) {
+        Event event = eventRepository.findByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
