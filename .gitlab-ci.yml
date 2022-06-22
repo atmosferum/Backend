@@ -1,6 +1,7 @@
 stages:
   - build
   - image
+  - deploy
 
 .docker_login: &docker_login
   - mkdir -p /kaniko/.docker
@@ -52,3 +53,20 @@ Build an image:
       --dockerfile "${CI_PROJECT_DIR}/delivery/docker/Dockerfile"
       --build-arg "JAR_FOLDER=./target"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+
+Deploy to K8s:
+  image: docker:latest
+  stage: deploy
+  only:
+    - master
+  services:
+    - docker:dind
+  before_script:
+    - apk add curl git
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - kubectl version --client
+    - kubectl config use-context digedu/campus-june-2022/gitops-test:sferum-dev
+    - kubectl config set-context --current --namespace=app-campus-june-2022
+  script:
+    - kubectl set image deployment/campus-whattime backend=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
