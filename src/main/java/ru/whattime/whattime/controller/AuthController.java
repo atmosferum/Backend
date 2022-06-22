@@ -1,7 +1,9 @@
 package ru.whattime.whattime.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,7 @@ public class AuthController {
     private final UserService service;
     private final AuthTokenProvider tokenProvider;
 
-    private final Gson gson = new Gson();
+    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     @Value("${application.auth.cookie.name}")
     private String cookieName;
@@ -54,9 +56,10 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @SneakyThrows
     @GetMapping(path = "/currentUser")
     public ResponseEntity<?> currentUser() {
-        return ResponseEntity.ok(gson.toJson(service.getCurrentUser()));
+        return ResponseEntity.ok(objectWriter.writeValueAsString(service.getCurrentUser()));
     }
 
     private int daysToSeconds(int days) {
