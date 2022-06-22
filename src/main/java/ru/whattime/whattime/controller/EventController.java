@@ -1,7 +1,9 @@
 package ru.whattime.whattime.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,7 +21,8 @@ import java.util.regex.Pattern;
 public class EventController {
 
     private final EventService service;
-    private final Gson gson = new Gson();
+
+    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
@@ -33,6 +36,7 @@ public class EventController {
         return ResponseEntity.created(uri).build();
     }
 
+    @SneakyThrows
     @GetMapping("/{id}")
     public ResponseEntity<?> getEvent(@PathVariable String id) {
         if (!isUuid(id))
@@ -42,7 +46,7 @@ public class EventController {
         if (eventDto == null)
             return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok(gson.toJson(eventDto));
+        return ResponseEntity.ok(objectWriter.writeValueAsString(eventDto));
     }
 
     private Boolean isUuid(String uuid) {
