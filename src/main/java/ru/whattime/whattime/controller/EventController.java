@@ -40,4 +40,9 @@ public class EventController {
         service.putIntervals(intervals, eventId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(path = "/{eventId}/intervals", produces = "application/json")
+    public ResponseEntity<?> getIntervals(@PathVariable String eventId) {
+        return ResponseEntity.ok(service.getIntervals(eventId));
+    }
 }
