@@ -1,9 +1,6 @@
 package ru.whattime.whattime.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +51,6 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @SneakyThrows
     @GetMapping(path = "/currentUser", produces = "application/json")
     public ResponseEntity<?> currentUser() {
         return ResponseEntity.ok(service.getCurrentUser());
