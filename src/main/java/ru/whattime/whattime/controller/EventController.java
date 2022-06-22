@@ -22,8 +22,6 @@ public class EventController {
 
     private final EventService service;
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createEvent(@Valid @RequestBody EventDto eventDto) {
         EventDto event = service.createEvent(eventDto);
@@ -37,7 +35,7 @@ public class EventController {
     }
 
     @SneakyThrows
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> getEvent(@PathVariable String id) {
         if (!isUuid(id))
             return ResponseEntity.notFound().build(); // Лучше бросать Bad request, но по open-api низя
@@ -46,7 +44,7 @@ public class EventController {
         if (eventDto == null)
             return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok(objectWriter.writeValueAsString(eventDto));
+        return ResponseEntity.ok(eventDto);
     }
 
     private Boolean isUuid(String uuid) {
