@@ -31,6 +31,8 @@ Build an image:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
+  dependencies:
+    - Build jar
   before_script:
     - *docker_login
     - APP_NAME=mvn help:evaluate -Dexpression=project.version -q -DforceStdout
