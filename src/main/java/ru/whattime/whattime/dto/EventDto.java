@@ -1,5 +1,6 @@
 package ru.whattime.whattime.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Jacksonized
 public class EventDto {
 
+    @JsonProperty("id")
     @JsonSerialize(using = UuidSerializer.class)
     private UUID uuid;
 
