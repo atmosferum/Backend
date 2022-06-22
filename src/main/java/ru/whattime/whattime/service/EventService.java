@@ -1,7 +1,9 @@
 package ru.whattime.whattime.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.mapper.EventMapper;
 import ru.whattime.whattime.model.Event;
@@ -37,8 +39,8 @@ public class EventService {
     }
 
     public EventDto getEvent(UUID uuid) {
-        Optional<Event> event = eventRepository.findByUuid(uuid);
-        if (event.isEmpty()) return null;
-        return eventMapper.toDto(event.get());
+        Event event = eventRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with this uuid not found"));
+        return eventMapper.toDto(event);
     }
 }

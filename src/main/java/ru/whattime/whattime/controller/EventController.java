@@ -27,13 +27,12 @@ public class EventController {
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(event.getUuid().toString())
+                .buildAndExpand(event.getUuid())
                 .toUri();
 
         return ResponseEntity.created(uri).build();
     }
 
-    @SneakyThrows
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> getEvent(@IsUuid @PathVariable String id) {
         EventDto eventDto = service.getEvent(UUID.fromString(id));
