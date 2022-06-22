@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.service.EventService;
+import ru.whattime.whattime.validation.IsUuid;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -34,11 +35,7 @@ public class EventController {
 
     @SneakyThrows
     @GetMapping(path = "/{id}", produces = "application/json")
-    public ResponseEntity<?> getEvent(@PathVariable String id) {
-        if (!service.isUuid(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<?> getEvent(@IsUuid @PathVariable String id) {
         EventDto eventDto = service.getEvent(UUID.fromString(id));
         if (eventDto == null) {
             return ResponseEntity.notFound().build();
