@@ -36,6 +36,8 @@ Build jar:
 
 Build an image:
   stage: image
+  only:
+    - master
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
