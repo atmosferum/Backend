@@ -51,6 +51,11 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(path = "/currentUser", produces = "application/json")
+    public ResponseEntity<?> currentUser() {
+        return ResponseEntity.ok(service.getCurrentUser());
+    }
+
     private int daysToSeconds(int days) {
         return days * 24 * 60 * 60;
     }
