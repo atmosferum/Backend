@@ -45,8 +45,8 @@ public class EventService {
     }
 
     @Transactional
-    public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
-        Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
+    public void putIntervals(List<IntervalDto> intervalDtos, UUID eventId) {
+        Event event = eventRepository.findEventByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
@@ -67,8 +67,8 @@ public class EventService {
 
 
     @Transactional
-    public List<IntervalDto> getIntervals(String eventId) {
-        Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
+    public List<IntervalDto> getIntervals(UUID eventId) {
+        Event event = eventRepository.findEventByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         return event.getIntervals().stream().map(intervalMapper::toDto).toList();

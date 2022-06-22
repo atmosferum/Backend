@@ -13,6 +13,7 @@ import ru.whattime.whattime.validation.NotOverlay;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/events")
@@ -35,14 +36,14 @@ public class EventController {
     }
 
     @PostMapping(path = "/{eventId}/intervals", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> putIntervals(@PathVariable String eventId,
+    public ResponseEntity<?> putIntervals(@PathVariable UUID eventId,
                                           @RequestBody @NotOverlay List<@Valid IntervalDto> intervals) {
         service.putIntervals(intervals, eventId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path = "/{eventId}/intervals", produces = "application/json")
-    public ResponseEntity<?> getIntervals(@PathVariable String eventId) {
+    public ResponseEntity<?> getIntervals(@PathVariable UUID eventId) {
         return ResponseEntity.ok(service.getIntervals(eventId));
     }
 }
