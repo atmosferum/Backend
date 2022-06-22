@@ -60,7 +60,8 @@ public class EventService {
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
 
-        event.getIntervals().removeIf(i -> i.getOwner().equals(user));
+        // TODO: Разобраться с этой бесовщиной.
+        event.getIntervals().removeIf(i -> i.getOwner().getId().equals(user.getId()));
         eventRepository.save(event);
 
         List<Interval> intervals = intervalDtos.stream().map(intervalDto -> {
@@ -85,57 +86,45 @@ public class EventService {
 
     @Transactional
     public VoitingResultDto getVoitingResult(UUID eventId) {
+
+        record IntervalPart(Long time, boolean start) {
+        }
+
         Event event = eventRepository.findByUuid(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
+                .orElseThrow(IllegalArgumentException::new);
 
-        VoitingResultDto.VoitingResultDtoBuilder voitingResult = VoitingResultDto.builder()
-                .event(eventMapper.toDto(event));
+        var intervals = event.getIntervals().stream()
+                .map(intervalMapper::toDto)
+                .toList();
 
+        List<IntervalPart> parts = new ArrayList<>();
         Set<UserDto> participants = new HashSet<>();
 
-        List<Interval> intervals = event.getIntervals();
-        List<Interval> ownerIntervals = intervals.stream().filter(interval -> interval.getOwner().equals(event.getOwner())).toList();
-        List<Interval> participantsIntervals = intervals.stream().filter(interval -> !interval.getOwner().equals(event.getOwner())).toList();
+        for (var i : intervals) {
+            parts.add(new IntervalPart(i.getStartTime(), true));
+            parts.add(new IntervalPart(i.getEndTime(), false));
+            participants.add(i.getOwner());
+        }
 
-        participantsIntervals.forEach(interval -> participants.add(userMapper.toDto(interval.getOwner())));
+        parts.sort(
+                Comparator.comparing(IntervalPart::time)
+                        .thenComparing(IntervalPart::start)
+        );
 
-        int maxVoices = 0;
-        List<Interval> candidateIntervals = new ArrayList<>();
+        List<IntervalDto> result = new ArrayList<>();
 
-        for (Interval ownerInterval : ownerIntervals) {
-            Interval candidateInterval = new Interval();
-            candidateInterval.setStartTime(ownerInterval.getStartTime());
-            candidateInterval.setEndTime(ownerInterval.getEndTime());
-            int voices = 0;
-
-            for (Interval participantsInterval : participantsIntervals) {
-                if ((participantsInterval.getStartTime().isAfter(ownerInterval.getStartTime()) || participantsInterval.getStartTime().isEqual(ownerInterval.getStartTime()))
-                        && (participantsInterval.getEndTime().isBefore(ownerInterval.getEndTime()) || participantsInterval.getEndTime().isEqual(ownerInterval.getEndTime()))) {
-                    if (candidateInterval.getStartTime().isBefore(participantsInterval.getStartTime())) {
-                        candidateInterval.setStartTime(participantsInterval.getStartTime());
-                    }
-
-                    if (candidateInterval.getEndTime().isAfter(participantsInterval.getEndTime())) {
-                        candidateInterval.setEndTime(participantsInterval.getEndTime());
-                    }
-
-                    voices++;
-                }
-            }
-
-            if (voices > maxVoices) {
-                maxVoices = voices;
-                candidateIntervals.clear();
-                candidateIntervals.add(candidateInterval);
-            } else if(voices == maxVoices) {
-                candidateIntervals.add(candidateInterval);
+        int votes = 0;
+        for (int i = 0; i < parts.size() - 1; i++) {
+            votes = parts.get(i).start ? votes - 1 : votes + 1;
+            if (votes == participants.size()) {
+                result.add(new IntervalDto(parts.get(i).time, parts.get(i + 1).time));
             }
         }
 
-        voitingResult.intervals(candidateIntervals.stream().map(intervalMapper::toDto).toList());
-        voitingResult.participants(participants);
-
-        return voitingResult.build();
-
+        return VoitingResultDto.builder()
+                .event(eventMapper.toDto(event))
+                .intervals(result)
+                .participants(new ArrayList<>(participants))
+                .build();
     }
 }
