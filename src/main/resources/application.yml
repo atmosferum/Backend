@@ -6,3 +6,14 @@ application:
     cookie:
       name: authToken
       maxAgeInDays: 365
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
