@@ -16,12 +16,12 @@ variables:
 Test:
   stage: test
   script:
-    - mvn test
+    - ./mvnw test
 
 Build jar:
   stage: build
   script:
-    - mvn clean package -DskipTests
+    - ./mvnw clean package -DskipTests
   artifacts:
     paths:
       - target/*.jar
