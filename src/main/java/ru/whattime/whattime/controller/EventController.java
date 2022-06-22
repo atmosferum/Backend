@@ -1,7 +1,5 @@
 package ru.whattime.whattime.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +26,7 @@ public class EventController {
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(event.getId())
+                .buildAndExpand(event.getUuid().toString())
                 .toUri();
 
         return ResponseEntity.created(uri).build();
@@ -37,24 +35,15 @@ public class EventController {
     @SneakyThrows
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> getEvent(@PathVariable String id) {
-        if (!isUuid(id)) {
+        if (!service.isUuid(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        EventDto eventDto = service.getEventByUuid(UUID.fromString(id));
+        EventDto eventDto = service.getEvent(UUID.fromString(id));
         if (eventDto == null) {
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(eventDto);
-    }
-
-    private Boolean isUuid(String uuid) {
-        Pattern UUID_REGEX_PATTERN = Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
-
-        if (uuid == null) {
-            return false;
-        }
-        return UUID_REGEX_PATTERN.matcher(uuid).matches();
     }
 }

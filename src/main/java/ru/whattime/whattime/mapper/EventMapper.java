@@ -13,13 +13,13 @@ import java.time.ZoneId;
 public interface EventMapper {
 
     @Mapping(source = "created", target = "createdAt")
-    @Mapping(source = "uuid", target = "id")
     EventDto toDto(Event event);
 
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "updated", ignore = true)
     @Mapping(target = "intervals", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Event toEntity(EventDto eventDto);
 
     default Long map(LocalDateTime value) {
