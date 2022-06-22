@@ -1,7 +1,7 @@
 stages:
   - build
   - image
-  - update_deployment
+  - deploy
 
 .docker_login: &docker_login
   - mkdir -p /kaniko/.docker
@@ -57,7 +57,7 @@ Build an image:
 
 update_deployment:
   image: docker:latest
-  stage: build
+  stage: deploy
   services:
     - docker:dind
   before_script:
@@ -69,4 +69,4 @@ update_deployment:
     - kubectl config set-context --current --namespace=app-campus-june-2022
 
   script:
-    - kubectl set image deployment/campus-whattime backend=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+    - kubectl set image deployment/campus-whattime backend=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
