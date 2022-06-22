@@ -14,7 +14,6 @@ import ru.whattime.whattime.model.User;
 import ru.whattime.whattime.repository.EventRepository;
 import ru.whattime.whattime.repository.IntervalRepository;
 import ru.whattime.whattime.repository.UserRepository;
-import ru.whattime.whattime.validator.IntervalsValidator;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -31,7 +30,6 @@ public class EventService {
     private final EventMapper eventMapper;
     private final IntervalMapper intervalMapper;
     private final UserService userService;
-    private final IntervalsValidator intervalsValidator;
 
     @Transactional
     public EventDto createEvent(EventDto eventDto) {
@@ -48,10 +46,6 @@ public class EventService {
 
     @Transactional
     public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
-        if (!intervalsValidator.validate(intervalDtos)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad intervals content");
-        }
-
         Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 

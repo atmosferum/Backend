@@ -8,9 +8,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.dto.IntervalDto;
 import ru.whattime.whattime.service.EventService;
+import ru.whattime.whattime.validation.RightIntervals;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class EventController {
     }
 
     @PostMapping(path = "/{eventId}/intervals", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> putIntervals(@PathVariable String eventId, @RequestBody @NotNull List<@Valid IntervalDto> intervals) {
+    public ResponseEntity<?> putIntervals(@PathVariable String eventId, @RequestBody @RightIntervals List<IntervalDto> intervals) {
         service.putIntervals(intervals, eventId);
         return ResponseEntity.noContent().build();
     }

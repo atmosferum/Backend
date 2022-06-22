@@ -16,5 +16,4 @@ public class IntervalDto {
 
     @NotNull
     private Long endTime;
-
 }
