@@ -19,10 +19,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AccessDeniedFilter extends OncePerRequestFilter {
 
-    // TODO: Regexp
     private static final Set<Pair<String, String>> REQUESTS_TO_FILTER = Set.of(
             Pair.of("/api/v1/events", "POST"),
-            Pair.of("/api/v1/events/{var}/intervals", "POST")
+            Pair.of("/api/v1/events/*/intervals", "POST")
     );
 
     private final SecurityContext securityContext;
@@ -44,13 +43,8 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
     }
 
     private boolean checkMatches(String entry, String request) {
-        String regex = entry.replace("{var}", ".+?");
-
-        if (regex.endsWith("/")) {
-            regex = regex + "?";
-        } else {
-            regex = regex + "/?";
-        }
+        String regex = entry.replace("*", "[^/]+");
+        regex = regex.endsWith("/") ? regex + "?" : regex + "/?";
 
         return request.matches(regex);
     }
