@@ -24,9 +24,15 @@ Build jar:
   image: maven:3.8.6-openjdk-18
   script:
     - mvn clean package -DskipTests
+    - cd target
+    - java -jar -Djarmode=layertools whattime-0.0.1-SNAPSHOT.jar extract
   artifacts:
     paths:
       - target/*.jar
+      - target/spring-boot-loader
+      - target/dependencies
+      - target/snapshot-dependencies
+      - target/application
 
 Build an image:
   stage: image
@@ -37,8 +43,6 @@ Build an image:
     - Build jar
   before_script:
     - *docker_login
-    - cd target
-    - java -jar -Djarmode=layertools whattime-0.0.1-SNAPSHOT.jar extract
     - if [ $CI_COMMIT_TAG == '' ]; then APP_VERSION=${CI_COMMIT_SHORT_SHA} fi
   script:
     - >-
