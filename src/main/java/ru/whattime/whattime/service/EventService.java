@@ -16,10 +16,8 @@ import ru.whattime.whattime.repository.IntervalRepository;
 import ru.whattime.whattime.repository.UserRepository;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +52,7 @@ public class EventService {
 
     @Transactional
     public void putIntervals(List<IntervalDto> intervalDtos, String eventId) {
-        Event event = eventRepository.findEventByUuid(UUID.fromString(eventId))
+        Event event = eventRepository.findByUuid(UUID.fromString(eventId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
         User user = userRepository.getReferenceById(userService.getCurrentUser().getId());
