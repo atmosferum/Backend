@@ -46,4 +46,14 @@ public class EventController {
     public ResponseEntity<?> getIntervals(@PathVariable UUID eventId) {
         return ResponseEntity.ok(service.getIntervals(eventId));
     }
+
+    @GetMapping(path = "/{id}", produces = "application/json")
+    public ResponseEntity<?> getEvent(@PathVariable UUID id) {
+        EventDto eventDto = service.getEvent(id);
+        if (eventDto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(eventDto);
+    }
 }
