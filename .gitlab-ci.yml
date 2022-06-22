@@ -39,6 +39,7 @@ Build an image:
   stage: image
   only:
     - master
+    - ci_test
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
