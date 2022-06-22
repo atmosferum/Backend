@@ -46,6 +46,7 @@ Build an image:
   script:
     - >-
       /kaniko/executor
-      --context "${CI_PROJECT_DIR}/target"
+      --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/delivery/docker/Dockerfile"
+      --build-arg "JAR_FOLDER=./target"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
