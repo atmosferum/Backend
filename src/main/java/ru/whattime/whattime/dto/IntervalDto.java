@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class IntervalDto {
+    private Long id;
+
     private User owner;
 
     @NotNull
