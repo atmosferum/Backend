@@ -37,12 +37,14 @@ public class EventController {
     @SneakyThrows
     @GetMapping(path = "/{id}", produces = "application/json")
     public ResponseEntity<?> getEvent(@PathVariable String id) {
-        if (!isUuid(id))
-            return ResponseEntity.notFound().build(); // Лучше бросать Bad request, но по open-api низя
+        if (!isUuid(id)) {
+            return ResponseEntity.notFound().build();
+        }
 
         EventDto eventDto = service.getEventByUuid(UUID.fromString(id));
-        if (eventDto == null)
+        if (eventDto == null) {
             return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok(eventDto);
     }
