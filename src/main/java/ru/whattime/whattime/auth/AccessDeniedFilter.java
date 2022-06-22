@@ -39,17 +39,19 @@ public class AccessDeniedFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return REQUESTS_TO_FILTER.stream()
-                .noneMatch(entry -> (entry.getFirst().equals(request.getRequestURI())
-                        && entry.getSecond().equals(request.getMethod()))
-                        || checkMatches(entry.getFirst(), request.getRequestURI()));
+                .noneMatch(entry -> checkMatches(entry.getFirst(), request.getRequestURI())
+                        && entry.getSecond().equals(request.getMethod()));
     }
 
     private boolean checkMatches(String entry, String request) {
-        if (!entry.contains("{") && !entry.contains("}")) {
-            return false;
+        String regex = entry.replace("{var}", ".+?");
+
+        if (regex.endsWith("/")) {
+            regex = regex + "?";
+        } else {
+            regex = regex + "/?";
         }
 
-        String regex = entry.replace("{", ".+?").replace("var", "").replace("}", "");
         return request.matches(regex);
     }
 }
