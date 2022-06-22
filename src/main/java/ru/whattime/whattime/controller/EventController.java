@@ -35,7 +35,7 @@ public class EventController {
     }
 
     @PostMapping(path = "/{eventId}/intervals", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> putIntervals(@PathVariable String eventId, @RequestBody @RightIntervals List<IntervalDto> intervals) {
+    public ResponseEntity<?> putIntervals(@PathVariable String eventId, @RequestBody  @RightIntervals List<@Valid IntervalDto> intervals) {
         service.putIntervals(intervals, eventId);
         return ResponseEntity.noContent().build();
     }

@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = RightIntervalsConstraintValidator.class)
-@Target({ElementType.TYPE_USE, ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.PARAMETER, ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RightIntervals {
     String message() default "Bad intervals content";

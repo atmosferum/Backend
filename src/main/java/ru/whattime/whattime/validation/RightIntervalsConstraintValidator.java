@@ -18,10 +18,6 @@ public class RightIntervalsConstraintValidator implements ConstraintValidator<Ri
         for (int i = 0; i < intervalDtos.size() - 1; i++) {
             IntervalDto interval = intervalDtos.get(i);
 
-            if (interval.getStartTime() == null || interval.getEndTime() == null) {
-                return false;
-            }
-
             LocalDateTime startTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(interval.getStartTime()), ZoneId.systemDefault());
             LocalDateTime endTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(interval.getEndTime()), ZoneId.systemDefault());
             LocalDateTime startTimeNext = LocalDateTime.ofInstant(Instant.ofEpochSecond(intervalDtos.get(i + 1).getStartTime()), ZoneId.systemDefault());
@@ -32,6 +28,12 @@ public class RightIntervalsConstraintValidator implements ConstraintValidator<Ri
 
             if (endTime.isBefore(startTime) && startTime.isBefore(LocalDateTime.now())) {
                 return false;
+            }
+
+            if (i != intervalDtos.size()) {
+                if (endTime.isBefore(startTimeNext)) {
+                    return false;
+                }
             }
         }
 
