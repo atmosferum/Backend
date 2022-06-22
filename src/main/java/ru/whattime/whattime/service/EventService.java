@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.whattime.whattime.dto.EventDto;
 import ru.whattime.whattime.dto.IntervalDto;
 import ru.whattime.whattime.dto.UserDto;
-import ru.whattime.whattime.dto.VoitingResultDto;
+import ru.whattime.whattime.dto.VotingResultDto;
 import ru.whattime.whattime.mapper.EventMapper;
 import ru.whattime.whattime.mapper.IntervalMapper;
 import ru.whattime.whattime.mapper.UserMapper;
@@ -85,7 +85,7 @@ public class EventService {
     }
 
     @Transactional
-    public VoitingResultDto getVoitingResult(UUID eventId) {
+    public VotingResultDto getVotingResult(UUID eventId) {
 
         record IntervalPart(Long time, boolean start) {
         }
@@ -121,7 +121,7 @@ public class EventService {
             }
         }
 
-        return VoitingResultDto.builder()
+        return VotingResultDto.builder()
                 .event(eventMapper.toDto(event))
                 .intervals(result)
                 .participants(new ArrayList<>(participants))
