@@ -13,10 +13,10 @@ public class IntervalDto {
     private Long id;
     private User owner;
 
-    @NotNull
+    @NotNull(message = "Start time of an interval must not be null")
     private Long startTime;
 
-    @NotNull
+    @NotNull(message = "End time of an interval must not be null")
     private Long endTime;
 
 }

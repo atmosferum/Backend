@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 public class UserDto {
     private Long id;
 
-    @NotBlank
-    @Size(min = 1, max = 63)
+    @NotBlank(message = "User's name must not be blank")
+    @Size(min = 1, max = 63, message = "User's name length should be between 1 and 63")
     private String name;
 }
