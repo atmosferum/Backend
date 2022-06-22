@@ -34,6 +34,7 @@ Build jar:
       - target/dependencies
       - target/snapshot-dependencies
       - target/application
+    expire_in: 1 hour
 
 Build an image:
   stage: image
