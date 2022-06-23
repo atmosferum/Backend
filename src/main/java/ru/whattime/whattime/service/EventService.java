@@ -115,7 +115,7 @@ public class EventService {
 
         int votes = 0;
         for (int i = 0; i < parts.size() - 1; i++) {
-            votes = parts.get(i).start ? votes - 1 : votes + 1;
+            votes = parts.get(i).start ? votes + 1 : votes - 1;
             if (votes == participants.size()) {
                 result.add(new IntervalDto(parts.get(i).time, parts.get(i + 1).time));
             }
