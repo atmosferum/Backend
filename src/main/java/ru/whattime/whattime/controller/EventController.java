@@ -47,6 +47,11 @@ public class EventController {
         return ResponseEntity.ok(service.getIntervals(eventId));
     }
 
+    @GetMapping(path = "/{eventId}/participants", produces = "application/json")
+    public ResponseEntity<?> getParticipants(@PathVariable UUID eventId) {
+        return ResponseEntity.ok(service.getParticipants(eventId));
+    }
+
     @GetMapping(path = "/{eventId}/result", produces = "application/json")
     public ResponseEntity<?> getVotingResult(@PathVariable UUID eventId) {
         return ResponseEntity.ok(service.getVotingResult(eventId));

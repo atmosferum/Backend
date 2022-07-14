@@ -82,6 +82,24 @@ public class EventService {
     }
 
     @Transactional
+    public List<UserDto> getParticipants(UUID eventId) {
+        Event event = eventRepository.findByUuid(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
+
+        List<IntervalDto> intervals = event.getIntervals().stream()
+                .map(intervalMapper::toDto)
+                .toList();
+
+        Set<UserDto> participants = new HashSet<>();
+
+        for (IntervalDto i : intervals) {
+            participants.add(i.getOwner());
+        }
+
+        return participants.stream().toList();
+    }
+
+    @Transactional
     public VotingResultDto getVotingResult(UUID eventId) {
         record IntervalPart(UserDto owner, Long time, boolean start) {}
 
@@ -93,12 +111,10 @@ public class EventService {
                 .toList();
 
         List<IntervalPart> parts = new ArrayList<>();
-        Set<UserDto> participants = new HashSet<>();
 
         for (IntervalDto i : intervals) {
             parts.add(new IntervalPart(i.getOwner(), i.getStartTime(), true));
             parts.add(new IntervalPart(i.getOwner(), i.getEndTime(), false));
-            participants.add(i.getOwner());
         }
 
         parts.sort(Comparator.comparing(IntervalPart::time)
@@ -127,7 +143,6 @@ public class EventService {
         return VotingResultDto.builder()
                 .event(eventMapper.toDto(event))
                 .intervals(resultIntervals)
-                .participants(participants.stream().toList())
                 .build();
     }
 }

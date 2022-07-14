@@ -12,5 +12,4 @@ import java.util.List;
 public class VotingResultDto {
     private EventDto event;
     private List<ResultIntervalDto> intervals;
-    private List<UserDto> participants;
 }
