@@ -131,14 +131,14 @@ public class EventService {
                 resultIntervals.add(ResultIntervalDto.builder()
                         .startTime(parts.get(i - 1).time)
                         .endTime(parts.get(i).time)
-                        .participants(intervalParticipants.stream().toList())
+                        .owners(intervalParticipants.stream().toList())
                         .build());
                 intervalParticipants.remove(parts.get(i).owner);
             }
         }
 
-        ResultIntervalDto max = resultIntervals.stream().max(Comparator.comparing(resultInterval -> resultInterval.getParticipants().size())).get();
-        resultIntervals = resultIntervals.stream().filter(resultInterval -> resultInterval.getParticipants().size() == max.getParticipants().size()).collect(Collectors.toList());
+        ResultIntervalDto max = resultIntervals.stream().max(Comparator.comparing(resultInterval -> resultInterval.getOwners().size())).get();
+        resultIntervals = resultIntervals.stream().filter(resultInterval -> resultInterval.getOwners().size() == max.getOwners().size()).collect(Collectors.toList());
 
         return VotingResultDto.builder()
                 .event(eventMapper.toDto(event))

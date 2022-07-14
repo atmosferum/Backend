@@ -12,5 +12,5 @@ import java.util.List;
 public class ResultIntervalDto {
     private Long startTime;
     private Long endTime;
-    private List<UserDto> participants;
+    private List<UserDto> owners;
 }
