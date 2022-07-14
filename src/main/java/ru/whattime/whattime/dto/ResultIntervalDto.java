@@ -9,7 +9,8 @@ import java.util.List;
 @Data
 @Builder(toBuilder = true)
 @Jacksonized
-public class VotingCandidateDto {
-    private IntervalDto interval;
+public class ResultIntervalDto {
+    private Long startTime;
+    private Long endTime;
     private List<UserDto> participants;
 }

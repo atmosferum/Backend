@@ -104,7 +104,7 @@ public class EventService {
         parts.sort(Comparator.comparing(IntervalPart::time)
                         .thenComparing(IntervalPart::start));
 
-        List<VotingCandidateDto> candidates = new ArrayList<>();
+        List<ResultIntervalDto> resultIntervals = new ArrayList<>();
         Set<UserDto> intervalParticipants = new HashSet<>();
 
         for (int i = 0; i < parts.size() - 1; i++) {
@@ -112,20 +112,21 @@ public class EventService {
             if (parts.get(i).start) {
                 intervalParticipants.add(parts.get(i).owner);
             } else {
-                candidates.add(VotingCandidateDto.builder()
-                        .interval(new IntervalDto(parts.get(i - 1).time, parts.get(i).time))
+                resultIntervals.add(ResultIntervalDto.builder()
+                        .startTime(parts.get(i - 1).time)
+                        .endTime(parts.get(i).time)
                         .participants(intervalParticipants.stream().toList())
                         .build());
                 intervalParticipants.remove(parts.get(i).owner);
             }
         }
 
-        VotingCandidateDto max = candidates.stream().max(Comparator.comparing(votingCandidateDto -> votingCandidateDto.getParticipants().size())).get();
-        candidates = candidates.stream().filter(votingCandidateDto -> votingCandidateDto.getParticipants().size() == max.getParticipants().size()).collect(Collectors.toList());
+        ResultIntervalDto max = resultIntervals.stream().max(Comparator.comparing(resultInterval -> resultInterval.getParticipants().size())).get();
+        resultIntervals = resultIntervals.stream().filter(resultInterval -> resultInterval.getParticipants().size() == max.getParticipants().size()).collect(Collectors.toList());
 
         return VotingResultDto.builder()
                 .event(eventMapper.toDto(event))
-                .candidates(candidates)
+                .intervals(resultIntervals)
                 .participants(participants.stream().toList())
                 .build();
     }

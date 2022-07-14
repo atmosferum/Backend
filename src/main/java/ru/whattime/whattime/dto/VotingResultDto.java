@@ -11,6 +11,6 @@ import java.util.List;
 @Jacksonized
 public class VotingResultDto {
     private EventDto event;
-    private List<VotingCandidateDto> candidates;
+    private List<ResultIntervalDto> intervals;
     private List<UserDto> participants;
 }
