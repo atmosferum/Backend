@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.whattime.whattime.dto.EventDto;
-import ru.whattime.whattime.dto.IntervalDto;
-import ru.whattime.whattime.dto.UserDto;
-import ru.whattime.whattime.dto.VotingResultDto;
+import ru.whattime.whattime.dto.*;
 import ru.whattime.whattime.mapper.EventMapper;
 import ru.whattime.whattime.mapper.IntervalMapper;
 import ru.whattime.whattime.mapper.UserMapper;
@@ -86,45 +83,50 @@ public class EventService {
 
     @Transactional
     public VotingResultDto getVotingResult(UUID eventId) {
-
-        record IntervalPart(Long time, boolean start) {
-        }
+        record IntervalPart(UserDto owner, Long time, boolean start) {}
 
         Event event = eventRepository.findByUuid(eventId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
-        var intervals = event.getIntervals().stream()
+        List<IntervalDto> intervals = event.getIntervals().stream()
                 .map(intervalMapper::toDto)
                 .toList();
 
         List<IntervalPart> parts = new ArrayList<>();
         Set<UserDto> participants = new HashSet<>();
 
-        for (var i : intervals) {
-            parts.add(new IntervalPart(i.getStartTime(), true));
-            parts.add(new IntervalPart(i.getEndTime(), false));
+        for (IntervalDto i : intervals) {
+            parts.add(new IntervalPart(i.getOwner(), i.getStartTime(), true));
+            parts.add(new IntervalPart(i.getOwner(), i.getEndTime(), false));
             participants.add(i.getOwner());
         }
 
-        parts.sort(
-                Comparator.comparing(IntervalPart::time)
-                        .thenComparing(IntervalPart::start)
-        );
+        parts.sort(Comparator.comparing(IntervalPart::time)
+                        .thenComparing(IntervalPart::start));
 
-        List<IntervalDto> result = new ArrayList<>();
+        List<VotingCandidateDto> candidates = new ArrayList<>();
+        Set<UserDto> intervalParticipants = new HashSet<>();
 
-        int votes = 0;
         for (int i = 0; i < parts.size() - 1; i++) {
-            votes = parts.get(i).start ? votes + 1 : votes - 1;
-            if (votes == participants.size()) {
-                result.add(new IntervalDto(parts.get(i).time, parts.get(i + 1).time));
+
+            if (parts.get(i).start) {
+                intervalParticipants.add(parts.get(i).owner);
+            } else {
+                candidates.add(VotingCandidateDto.builder()
+                        .interval(new IntervalDto(parts.get(i - 1).time, parts.get(i).time))
+                        .participants(intervalParticipants.stream().toList())
+                        .build());
+                intervalParticipants.remove(parts.get(i).owner);
             }
         }
 
+        VotingCandidateDto max = candidates.stream().max(Comparator.comparing(votingCandidateDto -> votingCandidateDto.getParticipants().size())).get();
+        candidates = candidates.stream().filter(votingCandidateDto -> votingCandidateDto.getParticipants().size() == max.getParticipants().size()).collect(Collectors.toList());
+
         return VotingResultDto.builder()
                 .event(eventMapper.toDto(event))
-                .intervals(result)
-                .participants(new ArrayList<>(participants))
+                .candidates(candidates)
+                .participants(participants.stream().toList())
                 .build();
     }
 }
