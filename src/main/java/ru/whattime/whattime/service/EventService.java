@@ -123,7 +123,7 @@ public class EventService {
         List<ResultIntervalDto> resultIntervals = new ArrayList<>();
         Set<UserDto> intervalParticipants = new HashSet<>();
 
-        for (int i = 0; i < parts.size() - 1; i++) {
+        for (int i = 0; i < parts.size(); i++) {
 
             if (parts.get(i).start) {
                 intervalParticipants.add(parts.get(i).owner);
