@@ -86,15 +86,16 @@ public class EventService {
         Event event = eventRepository.findByUuid(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The event does not exist."));
 
-        List<IntervalDto> intervals = event.getIntervals().stream()
+        List<Interval> intervals = event.getIntervals();
+        intervals.sort(Comparator.comparing(Interval::getCreated));
+
+        List<IntervalDto> intervalDtoList = intervals.stream()
                 .map(intervalMapper::toDto)
                 .toList();
 
         Set<UserDto> participants = new HashSet<>();
 
-        for (IntervalDto i : intervals) {
-            participants.add(i.getOwner());
-        }
+        intervalDtoList.forEach(interval -> participants.add(interval.getOwner()));
 
         return participants.stream().toList();
     }
