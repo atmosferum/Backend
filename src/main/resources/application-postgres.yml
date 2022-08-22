@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/whattime
-    username: whattime
-    password: 10oclock
+    url: jdbc:postgresql://ip/whattime
+    username: user
+    password: password
   jpa:
     hibernate:
       ddl-auto: create-drop

@@ -7,6 +7,13 @@ application:
       name: authToken
       maxAgeInDays: 365
 
+spring.datasource.url: jdbc:postgresql://ip/whattimeprod
+spring.datasource.username: user
+spring.datasource.password: password
+spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.generate-ddl: true
+spring.jpa.hibernate.ddl-auto: update
+
 
 management:
   endpoint:
