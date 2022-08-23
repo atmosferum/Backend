@@ -93,7 +93,7 @@ public class EventService {
                 .map(intervalMapper::toDto)
                 .toList();
 
-        Set<UserDto> participants = new HashSet<>();
+        LinkedHashSet<UserDto> participants = new LinkedHashSet<>();
 
         intervalDtoList.forEach(interval -> participants.add(interval.getOwner()));
 
