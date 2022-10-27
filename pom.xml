@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>ru.whattime</groupId>
-    <artifactId>whattime</artifactId>
+    <groupId>ru.meettime</groupId>
+    <artifactId>meettime</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>whattime</name>
     <description>An incredible project from incredible people</description>
